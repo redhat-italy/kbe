@@ -2,25 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://mhausenblas.github.io/kbe/</loc>
+    <loc>http://kubernetesbyexample.com/</loc>
   </url>
   
   <url>
-    <loc>https://mhausenblas.github.io/kbe/categories/</loc>
+    <loc>http://kubernetesbyexample.com/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://mhausenblas.github.io/kbe/page/</loc>
+    <loc>http://kubernetesbyexample.com/page/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://mhausenblas.github.io/kbe/page/services/</loc>
+    <loc>http://kubernetesbyexample.com/page/services/</loc>
   </url>
   
   <url>
-    <loc>https://mhausenblas.github.io/kbe/tags/</loc>
+    <loc>http://kubernetesbyexample.com/tags/</loc>
     <priority>0</priority>
   </url>
   

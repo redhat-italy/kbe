@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pages on Kubernetes By Example</title>
-    <link>https://mhausenblas.github.io/kbe/page/</link>
+    <link>http://kubernetesbyexample.com/page/</link>
     <description>Recent content in Pages on Kubernetes By Example</description>
     <generator>Hugo -- gohugo.io</generator>
     
-	<atom:link href="https://mhausenblas.github.io/kbe/page/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://kubernetesbyexample.com/page/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Services</title>
-      <link>https://mhausenblas.github.io/kbe/page/services/</link>
+      <link>http://kubernetesbyexample.com/page/services/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://mhausenblas.github.io/kbe/page/services/</guid>
+      <guid>http://kubernetesbyexample.com/page/services/</guid>
       <description>Using this RC and this SVC.
 $ kubectl get pods NAME READY STATUS RESTARTS AGE sise-bkvhs 1/1 Running 0 9m $ kubectl describe pod sise-bkvhs Name: sise-bkvhs Namespace: namingthings Security Policy: restricted Node: 192.168.99.100/192.168.99.100 Start Time: Tue, 18 Apr 2017 09:45:22 +0100 Labels: app=sise Status: Running IP: 172.17.0.2 Controllers: ReplicationController/sise ...  Now, from within the K8S cluster:
 $ curl 172.17.0.2:9876/endpoint0 {&amp;quot;host&amp;quot;: &amp;quot;172.17.0.2:9876&amp;quot;, &amp;quot;version&amp;quot;: &amp;quot;0.4.0&amp;quot;, &amp;quot;result&amp;quot;: &amp;quot;all is well&amp;quot;}  And service:</description>
