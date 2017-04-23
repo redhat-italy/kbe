@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Services</title>
+  <meta property="og:title" content="Services" />
+  <meta name="twitter:title" content="Services" />
+  <meta name="description" content="Kubernetes Services by example">
+  <meta property="og:description" content="Kubernetes Services by example">
+  <meta name="twitter:description" content="Kubernetes Services by example">
+  <meta name="author" content="Michael Hausenblas"/>
+  <link href='https://mhausenblas.github.io/kbe/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://mhausenblas.github.io/kbe/img/kbe-logo.png" />
+  <meta name="twitter:image" content="https://mhausenblas.github.io/kbe/img/kbe-logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mhausenblas" />
+  <meta name="twitter:creator" content="@mhausenblas" />
+  <meta property="og:url" content="https://mhausenblas.github.io/kbe/page/services/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Kubernetes By Example" />
+
+  <meta name="generator" content="Hugo 0.20.2" />
+  <link rel="canonical" href="https://mhausenblas.github.io/kbe/page/services/" />
+  <link rel="alternate" href="https://mhausenblas.github.io/index.xml" type="application/rss+xml" title="Kubernetes By Example">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mhausenblas.github.io/kbe/css/main.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://mhausenblas.github.io/kbe/css/pygment_highlights.css" />
+  <link rel="stylesheet" href="https://mhausenblas.github.io/kbe/css/highlight.min.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://mhausenblas.github.io/">Kubernetes By Example</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Kubernetes By Example" href="https://mhausenblas.github.io/">
+            <img class="avatar-img" src="https://mhausenblas.github.io/kbe/img/kbe-logo.png" alt="Kubernetes By Example" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="page-heading">
+              <h1>Services</h1>
+                
+                  
+                    <hr class="small">
+                    <span class="page-subheading">Kubernetes Services by example</span>
+                  
+                
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+  <div class="container" role="main">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>Using this RC and this SVC.</p>
+
+<pre><code class="language-bash">$ kubectl get pods
+NAME         READY     STATUS    RESTARTS   AGE
+sise-bkvhs   1/1       Running   0          9m
+
+$ kubectl describe pod sise-bkvhs
+Name:                   sise-bkvhs
+Namespace:              namingthings
+Security Policy:        restricted
+Node:                   192.168.99.100/192.168.99.100
+Start Time:             Tue, 18 Apr 2017 09:45:22 +0100
+Labels:                 app=sise
+Status:                 Running
+IP:                     172.17.0.2
+Controllers:            ReplicationController/sise
+...
+</code></pre>
+
+<p>Now, from within the K8S cluster:</p>
+
+<pre><code class="language-bash">$ curl 172.17.0.2:9876/endpoint0
+{&quot;host&quot;: &quot;172.17.0.2:9876&quot;, &quot;version&quot;: &quot;0.4.0&quot;, &quot;result&quot;: &quot;all is well&quot;}
+</code></pre>
+
+<p>And service:</p>
+
+<pre><code class="language-bash">$ kubectl get svc
+NAME            CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+simpleservice   172.30.40.155   &lt;none&gt;        80/TCP    1m
+
+$ kubectl describe svc simpleservice
+Name:                   simpleservice
+Namespace:              namingthings
+Labels:                 name=simpleservice
+Selector:               app=sise
+Type:                   ClusterIP
+IP:                     172.30.40.155
+Port:                   &lt;unset&gt; 80/TCP
+Endpoints:              172.17.0.2:9876
+Session Affinity:       None
+No events.
+</code></pre>
+
+<p>And from within the cluster:</p>
+
+<pre><code class="language-bash">$ curl 172.30.40.155:80/endpoint0
+{&quot;host&quot;: &quot;172.30.40.155&quot;, &quot;version&quot;: &quot;0.4.0&quot;, &quot;result&quot;: &quot;all is well&quot;}
+</code></pre>
+
+<p>Looking at the routing table in the cluster:</p>
+
+<pre><code class="language-bash">$ sudo iptables-save | grep simpleservice
+-A KUBE-SEP-ASIN52LB5SMYF6KR -s 172.17.0.2/32 -m comment --comment &quot;namingthings/simpleservice:&quot; -j KUBE-MARK-MASQ
+-A KUBE-SEP-ASIN52LB5SMYF6KR -p tcp -m comment --comment &quot;namingthings/simpleservice:&quot; -m tcp -j DNAT --to-destination 172.17.0.2:9876
+-A KUBE-SERVICES -d 172.30.40.155/32 -p tcp -m comment --comment &quot;namingthings/simpleservice: cluster IP&quot; -m tcp --dport 80 -j KUBE-SVC-IKIIGXZ2IBFIBYI6
+-A KUBE-SVC-IKIIGXZ2IBFIBYI6 -m comment --comment &quot;namingthings/simpleservice:&quot; -j KUBE-SEP-ASIN52LB5SMYF6KR
+</code></pre>
+
+<p>Now let&rsquo;s add a second pod to the service:</p>
+
+<pre><code class="language-bash">$ kubectl scale --replicas=2 rc/sise
+replicationcontroller &quot;sise&quot; scaled
+$ kubectl get pods
+NAME         READY     STATUS    RESTARTS   AGE
+sise-bkvhs   1/1       Running   0          11m
+sise-vncz4   1/1       Running   0          8s
+</code></pre>
+
+<p>And check the routing again:</p>
+
+<pre><code class="language-bash">$ sudo iptables-save | grep simpleservice
+-A KUBE-SEP-ASIN52LB5SMYF6KR -s 172.17.0.2/32 -m comment --comment &quot;namingthings/simpleservice:&quot; -j KUBE-MARK-MASQ
+-A KUBE-SEP-ASIN52LB5SMYF6KR -p tcp -m comment --comment &quot;namingthings/simpleservice:&quot; -m tcp -j DNAT --to-destination 172.17.0.2:9876
+-A KUBE-SEP-RP53IYKEFRDLQANZ -s 172.17.0.4/32 -m comment --comment &quot;namingthings/simpleservice:&quot; -j KUBE-MARK-MASQ
+-A KUBE-SEP-RP53IYKEFRDLQANZ -p tcp -m comment --comment &quot;namingthings/simpleservice:&quot; -m tcp -j DNAT --to-destination 172.17.0.4:9876
+-A KUBE-SERVICES -d 172.30.40.155/32 -p tcp -m comment --comment &quot;namingthings/simpleservice: cluster IP&quot; -m tcp --dport 80 -j KUBE-SVC-IKIIGXZ2IBFIBYI6
+-A KUBE-SVC-IKIIGXZ2IBFIBYI6 -m comment --comment &quot;namingthings/simpleservice:&quot; -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-ASIN52LB5SMYF6KR
+-A KUBE-SVC-IKIIGXZ2IBFIBYI6 -m comment --comment &quot;namingthings/simpleservice:&quot; -j KUBE-SEP-RP53IYKEFRDLQANZ
+</code></pre>
+
+<p>Summary, figure setup and discussion on advanced services (scaling) and further reading</p>
+
+        
+      </div>
+    </div>
+  </div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/mhausenblas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/mhausenblas" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="https://mhausenblas.github.io/index.xml" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          Michael Hausenblas
+          &nbsp;&bull;&nbsp;
+          0001
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://mhausenblas.github.io/">Kubernetes By Example</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.20.2</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://mhausenblas.github.io/kbe/js/main.js"></script>
+<script src="https://mhausenblas.github.io/kbe/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> renderMathInElement(document.body); </script>
+
+
+
+
+
+
+
+  </body>
+</html>
+
