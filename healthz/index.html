@@ -5,15 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Kubernetes By Example</title>
-  <meta property="og:title" content="Kubernetes By Example" />
-  <meta name="twitter:title" content="Kubernetes By Example" />
-  <meta name="description" content="Browse the examples:
- pods labels replication controllers services health checks  Want to try it out yourself? Follow the instructions here.">
-  <meta property="og:description" content="Browse the examples:
- pods labels replication controllers services health checks  Want to try it out yourself? Follow the instructions here.">
-  <meta name="twitter:description" content="Browse the examples:
- pods labels replication controllers services health checks  Want to try it out yourself? Follow the instructions here.">
+  <title>Health Checks</title>
+  <meta property="og:title" content="Health Checks" />
+  <meta name="twitter:title" content="Health Checks" />
+  <meta name="description" content="Kubernetes health checks by example">
+  <meta property="og:description" content="Kubernetes health checks by example">
+  <meta name="twitter:description" content="Kubernetes health checks by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -21,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/healthz/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/healthz/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -95,11 +92,11 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Kubernetes By Example</h1>
+              <h1>Health Checks</h1>
                 
                   
                     <hr class="small">
-                    <span class="page-subheading">A hands-on introduction to Kubernetes</span>
+                    <span class="page-subheading">Kubernetes health checks by example</span>
                   
                 
                 
@@ -112,30 +109,89 @@
 
 
     
-  <div role="main" class="container">
+  <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        
-          <div class="well">
-            <p>Browse the examples:</p>
+        <p>In order to verify if a container in a pod is in a state to serve traffic,
+Kubernetes provides for a range of health checking mechanisms. We will
+focus on HTTP health checks in the following. It is the responsibility
+of the application developer to expose an endpoint that Kubernetes can
+use to determine if the container is healthy.</p>
 
-<ul>
-<li><a href="/pods/">pods</a></li>
-<li><a href="/labels/">labels</a></li>
-<li><a href="/rcs/">replication controllers</a></li>
-<li><a href="/services/">services</a></li>
-<li><a href="/healthz/">health checks</a></li>
-</ul>
+<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/healthz/pod.yaml">pod</a>
+that exposes an endpoint <code>health/</code>, responding with a HTTP <code>200</code> status code:</p>
 
-<p>Want to try it out yourself? Follow the instructions <a href="/diy/">here</a>.</p>
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/healthz/pod.yaml
+</code></pre>
 
-          </div>
-        
+<p>In the pod specification we&rsquo;ve defined the following:</p>
 
-        <div class="posts-list">
-          
-          
-        </div>
+<pre><code>livenessProbe:
+  initialDelaySeconds: 2
+  periodSeconds: 5
+  httpGet:
+    path: /health
+    port: 9876
+</code></pre>
+
+<p>Above means that Kubernetes will after 2 seconds check the <code>health/</code> endpoint
+every 5 seconds.</p>
+
+<p>If we now look at the pod we can see that it is considered healthy:</p>
+
+<pre><code class="language-bash">$ kubectl describe pod hc
+Name:                   hc
+Namespace:              default
+Security Policy:        anyuid
+Node:                   192.168.99.100/192.168.99.100
+Start Time:             Tue, 25 Apr 2017 16:21:11 +0100
+Labels:                 &lt;none&gt;
+Status:                 Running
+...
+Events:
+  FirstSeen     LastSeen        Count   From                            SubobjectPath           Type            Reason          Message
+  ---------     --------        -----   ----                            -------------           --------        ------          -------
+  3s            3s              1       {default-scheduler }                                    Normal          Scheduled       Successfully assigned hc to 192.168.99.100
+  3s            3s              1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Pulled          Container image &quot;mhausenblas/simpleservice:0.5.0&quot;
+already present on machine
+  3s            3s              1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Created         Created container with docker id 8a628578d6ad; Security:[seccomp=unconfined]
+  2s            2s              1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Started         Started container with docker id 8a628578d6ad
+</code></pre>
+
+<p>Now we launch a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/healthz/badpod.yaml">bad pod</a>,
+that is, a pod that has a container that randomly (in the time range 1 to 4 sec)
+does not return a 200 code:</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/healthz/badpod.yaml
+</code></pre>
+
+<p>Looking at the events of the bad pod, we can see that the health check failed:</p>
+
+<pre><code class="language-bash">$ kubectl describe pod badpod
+...
+Events:
+  FirstSeen     LastSeen        Count   From                            SubobjectPath           Type            Reason          Message
+  ---------     --------        -----   ----                            -------------           --------        ------          -------
+  1m            1m              1       {default-scheduler }                                    Normal          Scheduled       Successfully assigned badpod to 192.168.99.100
+  1m            1m              1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Created         Created container with docker id 7dd660f04945; Security:[seccomp=unconfined]
+  1m            1m              1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Started         Started container with docker id 7dd660f04945
+  1m            23s             2       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Pulled          Container image &quot;mhausenblas/simpleservice:0.5.0&quot; already present on machine
+  23s           23s             1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Killing         Killing container with docker id 7dd660f04945: pod &quot;badpod_default(53e5c06a-29cb-11e7-b44f-be3e8f4350ff)&quot; container &quot;sise&quot; is unhealthy, it will be killed and re-created.
+  23s           23s             1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Created         Created container with docker id ec63dc3edfaa; Security:[seccomp=unconfined]
+  23s           23s             1       {kubelet 192.168.99.100}        spec.containers{sise}   Normal          Started         Started container with docker id ec63dc3edfaa
+  1m            18s             4       {kubelet 192.168.99.100}        spec.containers{sise}   Warning         Unhealthy       Liveness probe failed: Get http://172.17.0.4:9876/health: net/http: request canceled (Client.Timeout exceeded while awaiting headers)
+</code></pre>
+
+<p>This can also be verified as follows:</p>
+
+<pre><code class="language-bash">$ kubectl get pods
+NAME                      READY     STATUS    RESTARTS   AGE
+badpod                    1/1       Running   4          2m
+hc                        1/1       Running   0          6m
+</code></pre>
+
+<p>From above you can see that the <code>badpod</code> had already been re-launched 4 times,
+since the health check failed.</p>
 
         
       </div>

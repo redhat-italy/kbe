@@ -5,9 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Tags</title>
-  <meta property="og:title" content="Tags" />
-  <meta name="twitter:title" content="Tags" />
+  <title>Labels</title>
+  <meta property="og:title" content="Labels" />
+  <meta name="twitter:title" content="Labels" />
+  <meta name="description" content="Kubernetes labels by example">
+  <meta property="og:description" content="Kubernetes labels by example">
+  <meta name="twitter:description" content="Kubernetes labels by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -15,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/tags/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/labels/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/tags/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/labels/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -89,7 +92,12 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Tags</h1>
+              <h1>Labels</h1>
+                
+                  
+                    <hr class="small">
+                    <span class="page-subheading">Kubernetes labels by example</span>
+                  
                 
                 
             </div>
@@ -101,13 +109,76 @@
 
 
     
-  
   <div class="container" role="main">
-    <article class="post-preview">
-      <div class="list-group col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3">
-      
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>Labels are the mechanism you use to organize Kubernetes objects. A label is a key-value
+pair with certain <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set">restrictions</a>
+concerning length and allowed values but without any pre-defined meaning.
+So you&rsquo;re free to choose labels as you see fit, for example, to express
+environments such as &lsquo;this pod is running in production&rsquo; or ownership,
+like &lsquo;department X owns that pod&rsquo;.</p>
+
+<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/labels/pod.yaml">pod</a>
+that initially has one label (<code>env=development</code>):</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/labels/pod.yaml
+
+$ kubectl get pods --show-labels
+NAME       READY     STATUS    RESTARTS   AGE    LABELS
+labelex    1/1       Running   0          10m    env=development
+</code></pre>
+
+<p>In above <code>get pods</code> command note the <code>--show-labels</code> option that output the
+labels of an object in an additional column.</p>
+
+<p>You can add a label to the pod like so:</p>
+
+<pre><code class="language-bash">$ kubectl label pods labelex owner=michael
+
+$ kubectl get pods --show-labels
+NAME        READY     STATUS    RESTARTS   AGE    LABELS
+labelex     1/1       Running   0          16m    env=development,owner=michael
+</code></pre>
+
+<p>To use a label for filtering, for example to list only pods that have an
+<code>owner</code> that equals <code>michael</code>, use the <code>--selector</code> option:</p>
+
+<pre><code class="language-bash">$ kubectl get pods --selector owner=michael
+NAME      READY     STATUS    RESTARTS   AGE
+labelex   1/1       Running   0          27m
+</code></pre>
+
+<p>The <code>--selector</code> option can be abbreviated to <code>-l</code>, so to select pods that are
+labelled with <code>env=development</code>, do:</p>
+
+<pre><code class="language-bash">$ kubectl get pods -l env=development
+NAME      READY     STATUS    RESTARTS   AGE
+labelex   1/1       Running   0          27m
+</code></pre>
+
+<p>Oftentimes, Kubernetes objects also support set-based selectors.
+Let&rsquo;s launch <a href="https://github.com/mhausenblas/kbe/blob/master/specs/labels/anotherpod.yaml">another pod</a>
+that has two labels (<code>env=production</code> and <code>owner=michael</code>):</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/labels/anotherpod.yaml
+</code></pre>
+
+<p>Now, let&rsquo;s list all pods that are either labelled with <code>env=development</code> or with
+<code>env=production</code>:</p>
+
+<pre><code class="language-bash">$ kubectl get pods -l 'env in (production, development)'
+NAME           READY     STATUS    RESTARTS   AGE
+labelex        1/1       Running   0          43m
+labelexother   1/1       Running   0          3m
+</code></pre>
+
+<p>Note that labels are not restricted to pods. In fact you can apply them to
+all sorts of objects, such as nodes or services.</p>
+
+        
       </div>
-    </article>
+    </div>
   </div>
 
     <footer>

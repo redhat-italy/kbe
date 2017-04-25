@@ -5,9 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Tags</title>
-  <meta property="og:title" content="Tags" />
-  <meta name="twitter:title" content="Tags" />
+  <title>Pods</title>
+  <meta property="og:title" content="Pods" />
+  <meta name="twitter:title" content="Pods" />
+  <meta name="description" content="Kubernetes pods by example">
+  <meta property="og:description" content="Kubernetes pods by example">
+  <meta name="twitter:description" content="Kubernetes pods by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -15,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/tags/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/pods/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/tags/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/pods/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -89,7 +92,12 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Tags</h1>
+              <h1>Pods</h1>
+                
+                  
+                    <hr class="small">
+                    <span class="page-subheading">Kubernetes pods by example</span>
+                  
                 
                 
             </div>
@@ -101,13 +109,67 @@
 
 
     
-  
   <div class="container" role="main">
-    <article class="post-preview">
-      <div class="list-group col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3">
-      
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>The basic unit of deployment in Kubernetes is a pod. A pod is a collection of
+containers sharing a network and mount namespace with the guarantee that all of
+the containers are scheduled on the same node.</p>
+
+<p>To launch a pod using a <a href="https://github.com/mhausenblas/simpleservice">Docker image</a>
+that exposes a HTTP API at port <code>9876</code>, execute:</p>
+
+<pre><code class="language-bash">$ kubectl run sise --image=mhausenblas/simpleservice:0.5.0 --port=9876
+</code></pre>
+
+<p>We can now see that the pod is running:</p>
+
+<pre><code class="language-bash">$ kubectl get pods
+NAME                      READY     STATUS    RESTARTS   AGE
+sise-3210265840-k705b     1/1       Running   0          1m
+
+$ kubectl describe pod sise-3210265840-k705b | grep IP:
+IP:                     172.17.0.3
+</code></pre>
+
+<p>From within the cluster this pod is accessible via the pod IP <code>172.17.0.3</code>,
+which we&rsquo;ve learned from the <code>kubectl describe</code> command above:</p>
+
+<pre><code class="language-bash">[cluster] $ curl 172.17.0.3:9876/info
+{&quot;host&quot;: &quot;172.17.0.3:9876&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;172.17.0.1&quot;}
+</code></pre>
+
+<p>Note that <code>kubectl run</code> creates a deployment, so in order to get rid of the pod
+you have to execute <code>kubectl delete deployment sise</code>.</p>
+
+<p>Alternatively you can create a pod can from a configuration file. In our case
+the <a href="https://github.com/mhausenblas/kbe/blob/master/specs/pods/pod.yaml">pod</a> is
+running the already known <code>simpleservice</code> image from above along with
+a generic <code>CentOS</code> container:</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/pods/pod.yaml
+
+$ kubectl get pods
+NAME                      READY     STATUS    RESTARTS   AGE
+twocontainers             2/2       Running   0          7s
+</code></pre>
+
+<p>Now we can exec into the <code>CentOS</code> container and access the <code>simpleservice</code>
+on localhost:</p>
+
+<pre><code class="language-bash">$ kubectl exec twocontainers -c shell -i -t -- bash
+[root@twocontainers /]# curl localhost:9876/info
+{&quot;host&quot;: &quot;localhost:9876&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;127.0.0.1&quot;}
+</code></pre>
+
+<p>To sum up, launching one or more containers (together) in Kubernetes is simple,
+however doing it directly as shown above comes with a serious limitation: you have to
+manually take care of keeping them running in case of a failure. A much better way
+to supervise pods is to use <a href="/rcs/">replication controllers</a>.</p>
+
+        
       </div>
-    </article>
+    </div>
   </div>
 
     <footer>

@@ -2,22 +2,73 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pages on Kubernetes By Example</title>
-    <link>https://mhausenblas.github.io/kbe/page/</link>
+    <link>http://kubernetesbyexample.com/page/</link>
     <description>Recent content in Pages on Kubernetes By Example</description>
     <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 25 Apr 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://mhausenblas.github.io/kbe/page/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://kubernetesbyexample.com/page/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Services</title>
-      <link>https://mhausenblas.github.io/kbe/page/services/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>Health Checks</title>
+      <link>http://kubernetesbyexample.com/healthz/</link>
+      <pubDate>Tue, 25 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://mhausenblas.github.io/kbe/page/services/</guid>
-      <description>Using this RC and this SVC.
-$ kubectl get pods NAME READY STATUS RESTARTS AGE sise-bkvhs 1/1 Running 0 9m $ kubectl describe pod sise-bkvhs Name: sise-bkvhs Namespace: namingthings Security Policy: restricted Node: 192.168.99.100/192.168.99.100 Start Time: Tue, 18 Apr 2017 09:45:22 +0100 Labels: app=sise Status: Running IP: 172.17.0.2 Controllers: ReplicationController/sise ...  Now, from within the K8S cluster:
-$ curl 172.17.0.2:9876/endpoint0 {&amp;quot;host&amp;quot;: &amp;quot;172.17.0.2:9876&amp;quot;, &amp;quot;version&amp;quot;: &amp;quot;0.4.0&amp;quot;, &amp;quot;result&amp;quot;: &amp;quot;all is well&amp;quot;}  And service:</description>
+      <guid>http://kubernetesbyexample.com/healthz/</guid>
+      <description>In order to verify if a container in a pod is in a state to serve traffic, Kubernetes provides for a range of health checking mechanisms. We will focus on HTTP health checks in the following. It is the responsibility of the application developer to expose an endpoint that Kubernetes can use to determine if the container is healthy.
+Let&amp;rsquo;s create a pod that exposes an endpoint health/, responding with a HTTP 200 status code:</description>
+    </item>
+    
+    <item>
+      <title>Labels</title>
+      <link>http://kubernetesbyexample.com/labels/</link>
+      <pubDate>Tue, 25 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/labels/</guid>
+      <description>Labels are the mechanism you use to organize Kubernetes objects. A label is a key-value pair with certain restrictions concerning length and allowed values but without any pre-defined meaning. So you&amp;rsquo;re free to choose labels as you see fit, for example, to express environments such as &amp;lsquo;this pod is running in production&amp;rsquo; or ownership, like &amp;lsquo;department X owns that pod&amp;rsquo;.
+Let&amp;rsquo;s create a pod that initially has one label (env=development):</description>
+    </item>
+    
+    <item>
+      <title>Replication Controllers</title>
+      <link>http://kubernetesbyexample.com/rcs/</link>
+      <pubDate>Tue, 25 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/rcs/</guid>
+      <description>A replication controller (RC) is a supervisor for long-running pods. An RC will launch a specified number of pods called replicas and makes sure that they keep running, for example when a node fails or something inside of a pod, that is, in one of its containers goes wrong.
+Let&amp;rsquo;s create an RC that supervises a single replica of a pod:
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/rcs/rc.yaml  You can see the RC and the pod it looks after like so:</description>
+    </item>
+    
+    <item>
+      <title>Services</title>
+      <link>http://kubernetesbyexample.com/services/</link>
+      <pubDate>Tue, 25 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/services/</guid>
+      <description>A service is an abstraction for pods, providing a stable, virtual IP (VIP) address. While pods may come and go, services allow clients to reliably connect to the containers running in the pods, using the VIP. The virtual in VIP means it’s not an actual IP address connected to a network interface but its purpose is purely to forward traffic to one or more pods. Keeping the mapping between the VIP and the pods up-to-date is the job of kube-proxy, a process that runs on every node, which queries the API server to learn about new services in the cluster.</description>
+    </item>
+    
+    <item>
+      <title>DIY</title>
+      <link>http://kubernetesbyexample.com/diy/</link>
+      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/diy/</guid>
+      <description>If you want to try out the examples here yourself, you can use the same setup I&amp;rsquo;ve got locally running on my machine:
+ Install Minishift Run minishift start Install oc Log in using oc login -u system:admin with password admin Create a symlink like so: ln -s oc kubectl  </description>
+    </item>
+    
+    <item>
+      <title>Pods</title>
+      <link>http://kubernetesbyexample.com/pods/</link>
+      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/pods/</guid>
+      <description>The basic unit of deployment in Kubernetes is a pod. A pod is a collection of containers sharing a network and mount namespace with the guarantee that all of the containers are scheduled on the same node.
+To launch a pod using a Docker image that exposes a HTTP API at port 9876, execute:
+$ kubectl run sise --image=mhausenblas/simpleservice:0.5.0 --port=9876  We can now see that the pod is running:</description>
     </item>
     
   </channel>

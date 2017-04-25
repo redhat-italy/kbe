@@ -5,9 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Tags</title>
-  <meta property="og:title" content="Tags" />
-  <meta name="twitter:title" content="Tags" />
+  <title>Replication Controllers</title>
+  <meta property="og:title" content="Replication Controllers" />
+  <meta name="twitter:title" content="Replication Controllers" />
+  <meta name="description" content="Kubernetes replication controllers by example">
+  <meta property="og:description" content="Kubernetes replication controllers by example">
+  <meta name="twitter:description" content="Kubernetes replication controllers by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -15,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/tags/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/rcs/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/tags/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/rcs/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -89,7 +92,12 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Tags</h1>
+              <h1>Replication Controllers</h1>
+                
+                  
+                    <hr class="small">
+                    <span class="page-subheading">Kubernetes replication controllers by example</span>
+                  
                 
                 
             </div>
@@ -101,13 +109,63 @@
 
 
     
-  
   <div class="container" role="main">
-    <article class="post-preview">
-      <div class="list-group col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3">
-      
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>A replication controller (RC) is a supervisor for long-running pods.
+An RC will launch a specified number of pods called <code>replicas</code> and makes
+sure that they keep running, for example when a node fails or something
+inside of a pod, that is, in one of its containers goes wrong.</p>
+
+<p>Let&rsquo;s create an <a href="https://github.com/mhausenblas/kbe/blob/master/specs/rcs/rc.yaml">RC</a>
+that supervises a single replica of a pod:</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/rcs/rc.yaml
+</code></pre>
+
+<p>You can see the RC and the pod it looks after like so:</p>
+
+<pre><code class="language-bash">$ kubectl get rc
+NAME                DESIRED   CURRENT   READY     AGE
+rcex                1         1         1         3m
+
+$ kubectl get pods --show-labels
+NAME           READY     STATUS    RESTARTS   AGE    LABELS
+rcex-qrv8j     1/1       Running   0          4m     app=sise
+</code></pre>
+
+<p>Note two things here:</p>
+
+<ul>
+<li>the supervised pod got a random name assigned
+(<code>rcex-qrv8j</code>)</li>
+<li>the way the RC keeps track of its pods is via the label, here <code>app=sise</code></li>
+</ul>
+
+<p>To scale up, that is, to increase the number of replicas, do:</p>
+
+<pre><code class="language-bash">$ kubectl scale --replicas=3 rc/rcex
+
+$ kubectl get pods -l app=sise
+NAME         READY     STATUS    RESTARTS   AGE
+rcex-1rh9r   1/1       Running   0          54s
+rcex-lv6xv   1/1       Running   0          54s
+rcex-qrv8j   1/1       Running   0          10m
+
+</code></pre>
+
+<p>Finally, to get rid of the RC and the pods it is supervising, use:</p>
+
+<pre><code class="language-bash">$ kubectl delete rc rcex
+replicationcontroller &quot;rcex&quot; deleted
+</code></pre>
+
+<p>Note that, going forward, the RCs are called replica sets (RS), supporting set-based
+selectors.</p>
+
+        
       </div>
-    </article>
+    </div>
   </div>
 
     <footer>

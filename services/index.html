@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Services</title>
+  <meta property="og:title" content="Services" />
+  <meta name="twitter:title" content="Services" />
+  <meta name="description" content="Kubernetes services by example">
+  <meta property="og:description" content="Kubernetes services by example">
+  <meta name="twitter:description" content="Kubernetes services by example">
+  <meta name="author" content="Michael Hausenblas"/>
+  <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
+  <meta name="twitter:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mhausenblas" />
+  <meta name="twitter:creator" content="@mhausenblas" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/services/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Kubernetes By Example" />
+
+  <meta name="generator" content="Hugo 0.20.2" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/services/" />
+  <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="http://kubernetesbyexample.com/css/main.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://kubernetesbyexample.com/css/pygment_highlights.css" />
+  <link rel="stylesheet" href="http://kubernetesbyexample.com/css/highlight.min.css" />
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://kubernetesbyexample.com/">Kubernetes By Example</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Kubernetes By Example" href="http://kubernetesbyexample.com/">
+            <img class="avatar-img" src="http://kubernetesbyexample.com/img/kbe-logo.png" alt="Kubernetes By Example" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="page-heading">
+              <h1>Services</h1>
+                
+                  
+                    <hr class="small">
+                    <span class="page-subheading">Kubernetes services by example</span>
+                  
+                
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+  <div class="container" role="main">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>A service is an abstraction for pods, providing a stable, virtual IP (VIP) address.
+While pods may come and go, services allow clients to reliably connect to the
+containers running in the pods, using the VIP. The <code>virtual</code> in VIP means it’s
+not an actual IP address connected to a network interface but its purpose is purely
+to forward traffic to one or more pods. Keeping the mapping between the VIP and the
+pods up-to-date is the job of <a href="https://kubernetes.io/docs/admin/kube-proxy/">kube-proxy</a>,
+a process that runs on every node, which queries the API server to learn about
+new services in the cluster.</p>
+
+<p>Let&rsquo;s create a pod supervised by an <a href="https://github.com/mhausenblas/kbe/blob/master/specs/services/rc.yaml">RC</a>
+and a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/services/svc.yaml">service</a>
+along with it:</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/services/rc.yaml
+
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/services/svc.yaml
+</code></pre>
+
+<p>Now we have the supervised pod running:</p>
+
+<pre><code class="language-bash">$ kubectl get pods -l app=sise
+NAME           READY     STATUS    RESTARTS   AGE
+rcsise-6nq3k   1/1       Running   0          57s
+
+$ kubectl describe pod rcsise-6nq3k
+Name:                   rcsise-6nq3k
+Namespace:              default
+Security Policy:        restricted
+Node:                   192.168.99.100/192.168.99.100
+Start Time:             Tue, 25 Apr 2017 14:47:45 +0100
+Labels:                 app=sise
+Status:                 Running
+IP:                     172.17.0.3
+Controllers:            ReplicationController/rcsise
+Containers:
+...
+</code></pre>
+
+<p>You can, from within the cluster, access the pod directly via its
+assigned IP <code>172.17.0.3</code>:</p>
+
+<pre><code class="language-bash">[cluster] $ curl 172.17.0.3:9876/info
+{&quot;host&quot;: &quot;172.17.0.3:9876&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;172.17.0.1&quot;}
+</code></pre>
+
+<p>This is however, as mentioned above, not advisable since the IPs assigned
+to pods may change. Enter the <code>simpleservice</code> we&rsquo;ve created:</p>
+
+<pre><code class="language-bash">$ kubectl get svc
+NAME              CLUSTER-IP       EXTERNAL-IP   PORT(S)                   AGE
+simpleservice     172.30.228.255   &lt;none&gt;        80/TCP                    5m
+
+$ kubectl describe svc simpleservice
+Name:                   simpleservice
+Namespace:              default
+Labels:                 &lt;none&gt;
+Selector:               app=sise
+Type:                   ClusterIP
+IP:                     172.30.228.255
+Port:                   &lt;unset&gt; 80/TCP
+Endpoints:              172.17.0.3:9876
+Session Affinity:       None
+No events.
+</code></pre>
+
+<p>The service keeps track of the pods it forwards traffic to through the label,
+in our case <code>app=sise</code>.</p>
+
+<p>From within the cluster we can now access <code>simpleservice</code> like so:</p>
+
+<pre><code class="language-bash">[cluster] $ curl 172.30.228.255:80/info
+{&quot;host&quot;: &quot;172.30.228.255&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;10.0.2.15&quot;}
+</code></pre>
+
+<p>What makes the VIP <code>172.30.228.255</code> forward the traffic to the pod?
+The answer is: <a href="https://wiki.centos.org/HowTos/Network/IPTables">IPtables</a>,
+which is essentially a long list of rules that tells the Linux kernel what to do
+with a certain IP package.</p>
+
+<p>Looking at the rules that concern our service (executed on a cluster node) yields:</p>
+
+<pre><code class="language-bash">[cluster] $ sudo iptables-save | grep simpleservice
+-A KUBE-SEP-4SQFZS32ZVMTQEZV -s 172.17.0.3/32 -m comment --comment &quot;default/simpleservice:&quot; -j KUBE-MARK-MASQ
+-A KUBE-SEP-4SQFZS32ZVMTQEZV -p tcp -m comment --comment &quot;default/simpleservice:&quot; -m tcp -j DNAT --to-destination 172.17.0.3:9876
+-A KUBE-SERVICES -d 172.30.228.255/32 -p tcp -m comment --comment &quot;default/simpleservice: cluster IP&quot; -m tcp --dport 80 -j KUBE-SVC-EZC6WLOVQADP4IAW
+-A KUBE-SVC-EZC6WLOVQADP4IAW -m comment --comment &quot;default/simpleservice:&quot; -j KUBE-SEP-4SQFZS32ZVMTQEZV
+</code></pre>
+
+<p>Above you can see the four rules that <code>kube-proxy</code> has thankfully added to the
+routing table, essentially stating that TCP traffic to <code>172.30.228.255:80</code>
+should be forwarded to <code>172.17.0.3:9876</code>, which is our pod.</p>
+
+<p>Let’s now add a second pod by scaling up the RC supervising it:</p>
+
+<pre><code class="language-bash">$ kubectl scale --replicas=2 rc/rcsise
+replicationcontroller &quot;rcsise&quot; scaled
+
+$ kubectl gkubectl get pods -l app=sise
+NAME           READY     STATUS    RESTARTS   AGE
+rcsise-6nq3k   1/1       Running   0          15m
+rcsise-nv8zm   1/1       Running   0          5s
+</code></pre>
+
+<p>When we now check the relevant parts of the routing table again we notice
+the addition of a bunch of IPtables rules:</p>
+
+<pre><code class="language-bash">[cluster] $ sudo iptables-save | grep simpleservice
+-A KUBE-SEP-4SQFZS32ZVMTQEZV -s 172.17.0.3/32 -m comment --comment &quot;default/simpleservice:&quot; -j KUBE-MARK-MASQ
+-A KUBE-SEP-4SQFZS32ZVMTQEZV -p tcp -m comment --comment &quot;default/simpleservice:&quot; -m tcp -j DNAT --to-destination 172.17.0.3:9876
+-A KUBE-SEP-PXYYII6AHMUWKLYX -s 172.17.0.4/32 -m comment --comment &quot;default/simpleservice:&quot; -j KUBE-MARK-MASQ
+-A KUBE-SEP-PXYYII6AHMUWKLYX -p tcp -m comment --comment &quot;default/simpleservice:&quot; -m tcp -j DNAT --to-destination 172.17.0.4:9876
+-A KUBE-SERVICES -d 172.30.228.255/32 -p tcp -m comment --comment &quot;default/simpleservice: cluster IP&quot; -m tcp --dport 80 -j KUBE-SVC-EZC6WLOVQADP4IAW
+-A KUBE-SVC-EZC6WLOVQADP4IAW -m comment --comment &quot;default/simpleservice:&quot; -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-4SQFZS32ZVMTQEZV
+-A KUBE-SVC-EZC6WLOVQADP4IAW -m comment --comment &quot;default/simpleservice:&quot; -j KUBE-SEP-PXYYII6AHMUWKLYX
+</code></pre>
+
+<p>In above routing table listing we see rules for the newly created pod serving at
+<code>172.17.0.4:9876</code> as well as an additional rule:</p>
+
+<pre><code>-A KUBE-SVC-EZC6WLOVQADP4IAW -m comment --comment &quot;default/simpleservice:&quot; -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-4SQFZS32ZVMTQEZV
+</code></pre>
+
+<p>This causes the traffic to the service being equally split between our two pods
+by invoking the <code>statistics</code> module of IPtables.</p>
+
+        
+      </div>
+    </div>
+  </div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/mhausenblas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/mhausenblas" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          Michael Hausenblas
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="http://kubernetesbyexample.com/">Kubernetes By Example</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.20.2</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="http://kubernetesbyexample.com/js/main.js"></script>
+<script src="http://kubernetesbyexample.com/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> renderMathInElement(document.body); </script>
+
+
+
+
+
+
+
+  </body>
+</html>
+
