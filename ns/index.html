@@ -5,15 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Kubernetes By Example</title>
-  <meta property="og:title" content="Kubernetes By Example" />
-  <meta name="twitter:title" content="Kubernetes By Example" />
-  <meta name="description" content="Browse the examples:
- pods labels replication controllers services health checks environment variables namespaces secrets  Want to try it out yourself? Follow the instructions here.">
-  <meta property="og:description" content="Browse the examples:
- pods labels replication controllers services health checks environment variables namespaces secrets  Want to try it out yourself? Follow the instructions here.">
-  <meta name="twitter:description" content="Browse the examples:
- pods labels replication controllers services health checks environment variables namespaces secrets  Want to try it out yourself? Follow the instructions here.">
+  <title>Namespaces</title>
+  <meta property="og:title" content="Namespaces" />
+  <meta name="twitter:title" content="Namespaces" />
+  <meta name="description" content="Kubernetes namespaces by example">
+  <meta property="og:description" content="Kubernetes namespaces by example">
+  <meta name="twitter:description" content="Kubernetes namespaces by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -21,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/ns/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/ns/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -95,11 +92,11 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Kubernetes By Example</h1>
+              <h1>Namespaces</h1>
                 
                   
                     <hr class="small">
-                    <span class="page-subheading">A hands-on introduction to Kubernetes</span>
+                    <span class="page-subheading">Kubernetes namespaces by example</span>
                   
                 
                 
@@ -112,33 +109,66 @@
 
 
     
-  <div role="main" class="container">
+  <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        
-          <div class="well">
-            <p>Browse the examples:</p>
+        <p>Namespaces provide for a scope of Kubernetes objects. You can think of it
+as a workspace you&rsquo;re sharing with other users. Many objects such as pods and
+services are namespaced, while some (like nodes) are not. As a developer you&rsquo;d
+usually simply use an assigned namespace, however admins may wish to manage them,
+for example to set up access control or resource quotas.</p>
 
-<ul>
-<li><a href="/pods/">pods</a></li>
-<li><a href="/labels/">labels</a></li>
-<li><a href="/rcs/">replication controllers</a></li>
-<li><a href="/services/">services</a></li>
-<li><a href="/healthz/">health checks</a></li>
-<li><a href="/envs/">environment variables</a></li>
-<li><a href="/ns/">namespaces</a></li>
-<li><a href="/secrets/">secrets</a></li>
-</ul>
+<p>Let&rsquo;s list all namespaces (note that the output will depend on the environment
+you&rsquo;re using, I&rsquo;m using <a href="/diy/">Minishift</a>):</p>
 
-<p>Want to try it out yourself? Follow the instructions <a href="/diy/">here</a>.</p>
+<pre><code class="language-bash">$ kubectl get ns
+NAME              STATUS    AGE
+default           Active    13d
+kube-system       Active    13d
+namingthings      Active    12d
+openshift         Active    13d
+openshift-infra   Active    13d
+</code></pre>
 
-          </div>
-        
+<p>You can learn more about a namespace using the <code>describe</code> verb, for example:</p>
 
-        <div class="posts-list">
-          
-          
-        </div>
+<pre><code class="language-bash">$ kubectl describe ns default
+Name:   default
+Labels: &lt;none&gt;
+Status: Active
+
+No resource quota.
+
+No resource limits.
+</code></pre>
+
+<p>Let&rsquo;s now create a new <a href="https://github.com/mhausenblas/kbe/blob/master/specs/ns/ns.yaml">namespace</a>
+called <code>test</code> now:</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/ns/ns.yaml
+namespace &quot;test&quot; created
+
+$ kubectl get ns
+NAME              STATUS    AGE
+default           Active    13d
+kube-system       Active    13d
+namingthings      Active    12d
+openshift         Active    13d
+openshift-infra   Active    13d
+test              Active    3s
+</code></pre>
+
+<p>To launch a pod in the newley created namespace <code>test</code> and list it then you execute:</p>
+
+<pre><code class="language-bash">$ kubectl create --namespace=test -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/ns/pod.yaml
+
+$ kubectl get pods --namespace=test
+NAME        READY     STATUS    RESTARTS   AGE
+podintest   1/1       Running   0          16s
+</code></pre>
+
+<p>If you&rsquo;re an admin, you might want to check out the <a href="https://kubernetes.io/docs/tasks/administer-cluster/namespaces/">docs</a>
+for more info how to handle namespaces.</p>
 
         
       </div>

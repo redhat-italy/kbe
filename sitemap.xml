@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kubernetesbyexample.com/envs/</loc>
+    <lastmod>2017-04-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://kubernetesbyexample.com/ns/</loc>
+    <lastmod>2017-04-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://kubernetesbyexample.com/secrets/</loc>
+    <lastmod>2017-04-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://kubernetesbyexample.com/healthz/</loc>
     <lastmod>2017-04-25T00:00:00+00:00</lastmod>
   </url>
@@ -33,7 +48,7 @@
   
   <url>
     <loc>http://kubernetesbyexample.com/</loc>
-    <lastmod>2017-04-25T00:00:00+00:00</lastmod>
+    <lastmod>2017-04-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -43,7 +58,7 @@
   
   <url>
     <loc>http://kubernetesbyexample.com/page/</loc>
-    <lastmod>2017-04-25T00:00:00+00:00</lastmod>
+    <lastmod>2017-04-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

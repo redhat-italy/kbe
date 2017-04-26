@@ -5,10 +5,42 @@
     <link>http://kubernetesbyexample.com/</link>
     <description>Recent content on Kubernetes By Example</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 25 Apr 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 26 Apr 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://kubernetesbyexample.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Environment Variables</title>
+      <link>http://kubernetesbyexample.com/envs/</link>
+      <pubDate>Wed, 26 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/envs/</guid>
+      <description>You can set environment variables for containers running in a pod and in addition, Kubernetes exposes certain runtime infos via environment variables automatically.
+Let&amp;rsquo;s launch a pod that we pass an environment variable SIMPLE_SERVICE_VERSION with the value 1.0:
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/envs/pod.yaml $ kubectl describe pod envs | grep IP: IP: 172.17.0.3  Now, let&amp;rsquo;s verify from within the cluster if the application running in the pod has picked up the environment variable SIMPLE_SERVICE_VERSION:</description>
+    </item>
+    
+    <item>
+      <title>Namespaces</title>
+      <link>http://kubernetesbyexample.com/ns/</link>
+      <pubDate>Wed, 26 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/ns/</guid>
+      <description>Namespaces provide for a scope of Kubernetes objects. You can think of it as a workspace you&amp;rsquo;re sharing with other users. Many objects such as pods and services are namespaced, while some (like nodes) are not. As a developer you&amp;rsquo;d usually simply use an assigned namespace, however admins may wish to manage them, for example to set up access control or resource quotas.
+Let&amp;rsquo;s list all namespaces (note that the output will depend on the environment you&amp;rsquo;re using, I&amp;rsquo;m using Minishift):</description>
+    </item>
+    
+    <item>
+      <title>Secrets</title>
+      <link>http://kubernetesbyexample.com/secrets/</link>
+      <pubDate>Wed, 26 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/secrets/</guid>
+      <description>You don&amp;rsquo;t want sensitive information such as a database password or an API key keep around in clear text. Secrets provide you with a mechanism to use such information in a safe and reliable way.
+Let&amp;rsquo;s create a secret apikey that holds a (made-up) API key:
+$ echo -n &amp;quot;A19fh68B001j&amp;quot; &amp;gt; ./apikey.txt $ kubectl create secret generic apikey --from-file=./apikey.txt secret &amp;quot;apikey&amp;quot; created $ kubectl describe secrets/apikey Name: apikey Namespace: default Labels: &amp;lt;none&amp;gt; Annotations: &amp;lt;none&amp;gt; Type: Opaque Data ==== apikey.</description>
+    </item>
     
     <item>
       <title>Health Checks</title>
