@@ -139,8 +139,8 @@ which we&rsquo;ve learned from the <code>kubectl describe</code> command above:<
 {&quot;host&quot;: &quot;172.17.0.3:9876&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;172.17.0.1&quot;}
 </code></pre>
 
-<p>Note that <code>kubectl run</code> creates a deployment, so in order to get rid of the pod
-you have to execute <code>kubectl delete deployment sise</code>.</p>
+<p>Note that <code>kubectl run</code> creates a <a href="/deployments/">deployment</a>, so in order to
+get rid of the pod you have to execute <code>kubectl delete deployment sise</code>.</p>
 
 <p>Alternatively you can create a pod can from a configuration file. In our case
 the <a href="https://github.com/mhausenblas/kbe/blob/master/specs/pods/pod.yaml">pod</a> is
@@ -164,8 +164,9 @@ on localhost:</p>
 
 <p>To sum up, launching one or more containers (together) in Kubernetes is simple,
 however doing it directly as shown above comes with a serious limitation: you have to
-manually take care of keeping them running in case of a failure. A much better way
-to supervise pods is to use <a href="/rcs/">replication controllers</a>.</p>
+manually take care of keeping them running in case of a failure. A better way
+to supervise pods is to use <a href="/rcs/">replication controllers</a>, or even better
+<a href="/deployments">deployments</a>, giving you much more control.</p>
 
         
       </div>

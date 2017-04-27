@@ -5,12 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Volumes</title>
-  <meta property="og:title" content="Volumes" />
-  <meta name="twitter:title" content="Volumes" />
-  <meta name="description" content="Kubernetes volumes by example">
-  <meta property="og:description" content="Kubernetes volumes by example">
-  <meta name="twitter:description" content="Kubernetes volumes by example">
+  <title>Nodes</title>
+  <meta property="og:title" content="Nodes" />
+  <meta name="twitter:title" content="Nodes" />
+  <meta name="description" content="Kubernetes nodes by example">
+  <meta property="og:description" content="Kubernetes nodes by example">
+  <meta name="twitter:description" content="Kubernetes nodes by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -18,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/volumes/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/nodes/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/volumes/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/nodes/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -92,11 +92,11 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Volumes</h1>
+              <h1>Nodes</h1>
                 
                   
                     <hr class="small">
-                    <span class="page-subheading">Kubernetes volumes by example</span>
+                    <span class="page-subheading">Kubernetes nodes by example</span>
                   
                 
                 
@@ -112,58 +112,91 @@
   <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <p>A Kubernetes volume is essentially a directory accessible to all containers
-running in a pod. In contrast to the container-local filesystem, the data in volumes is preserved across
-container restarts. The medium backing a volume and its contents are determined
-by the volume type:</p>
+        <p>In Kubernetes, the nodes are the worker machines where your pods run.</p>
 
-<ul>
-<li>node-local types such as <code>emptyDir</code> or <code>hostPath</code></li>
-<li>file-sharing types such as <code>nfs</code></li>
-<li>cloud provider-specific types like <code>awsElasticBlockStore</code>, <code>azureDisk</code>, or <code>gcePersistentDisk</code></li>
-<li>distributed file system types, for example <code>glusterfs</code> or <code>cephfs</code></li>
-<li>special-purpose types like <code>secret</code>, <code>gitRepo</code></li>
-</ul>
+<p>As a developer you typically don&rsquo;t deal with nodes, however as an admin
+you might want to familiarize yourself with node <a href="https://kubernetes.io/docs/concepts/nodes/node/">operations</a>.</p>
 
-<p>A special type of volume is <code>PersistentVolume</code>, which we will cover elsewhere.</p>
+<p>To list available nodes in your cluster (note that the output will depend on the environment
+you&rsquo;re using, I&rsquo;m using <a href="/diy/">Minishift</a>):</p>
 
-<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/volumes/pod.yaml">pod</a>
-with two containers that use an <code>emptyDir</code> volume to exchange data:</p>
-
-<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/volumes/pod.yaml
-
-$ kubectl describe pod sharevol
-Name:                   sharevol
-Namespace:              default
-...
-Volumes:
-  xchange:
-    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
-    Medium:
+<pre><code class="language-bash">$ kubectl get nodes
+NAME             STATUS    AGE
+192.168.99.100   Ready     14d
 </code></pre>
 
-<p>We first exec into one of the containers in the pod, <code>c1</code>, check the volume mount
-and generate some data:</p>
+<p>One interesting task, from a developer point of view, is to make Kubernetes
+schedule a pod on a certain task. For this, we first need to label the node
+we want to target:</p>
 
-<pre><code class="language-bash">$ kubectl exec sharevol -c c1 -i -t -- bash
-[root@sharevol /]# mount | grep xchange
-/dev/sda1 on /tmp/xchange type ext4 (rw,relatime,data=ordered)
-[root@sharevol /]# echo 'some data' &gt; /tmp/xchange/data
+<pre><code class="language-bash">$ kubectl label nodes 192.168.99.100 shouldrun=here
+node &quot;192.168.99.100&quot; labeled
 </code></pre>
 
-<p>When we now exec into <code>c2</code>, the second container running in the pod, we can see
-the volume mounted at <code>/tmp/data</code> and are able to read the data created in the
-previous step:</p>
+<p>Now we can create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/nodes/pod.yaml">pod</a>
+that gets scheduled on the node we&rsquo;ve with the label <code>shouldrun=here</code>:</p>
 
-<pre><code class="language-bash">$ kubectl exec sharevol -c c2 -i -t -- bash
-[root@sharevol /]# mount | grep /tmp/data
-/dev/sda1 on /tmp/data type ext4 (rw,relatime,data=ordered)
-[root@sharevol /]# cat /tmp/data/data
-some data
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/nodes/pod.yaml
+
+$ kubectl get pods --output=wide
+NAME                      READY     STATUS    RESTARTS   AGE       IP               NODE
+onspecificnode            1/1       Running   0          8s        172.17.0.3       192.168.99.100
 </code></pre>
 
-<p>Note that in each container you need to decide where to mount the volume and
-that for <code>emptyDir</code> you currently can not specify resource consumption limits.</p>
+<p>To learn more about a specific node, <code>192.168.99.100</code> in our case, do:</p>
+
+<pre><code class="language-bash">$ kubectl describe node 192.168.99.100
+Name:			192.168.99.100
+Labels:			beta.kubernetes.io/arch=amd64
+			beta.kubernetes.io/os=linux
+			kubernetes.io/hostname=192.168.99.100
+			shouldrun=here
+Taints:			&lt;none&gt;
+CreationTimestamp:	Wed, 12 Apr 2017 17:17:13 +0100
+Phase:			
+Conditions:
+  Type			Status	LastHeartbeatTime			LastTransitionTime			Reason				Message
+  ----			------	-----------------			------------------			------				-------
+  OutOfDisk 		False 	Thu, 27 Apr 2017 14:55:49 +0100 	Thu, 27 Apr 2017 09:18:13 +0100 	KubeletHasSufficientDisk 	kubelet has sufficient disk space available
+  MemoryPressure 	False 	Thu, 27 Apr 2017 14:55:49 +0100 	Wed, 12 Apr 2017 17:17:13 +0100 	KubeletHasSufficientMemory 	kubelet has sufficient memory available
+  DiskPressure 		False 	Thu, 27 Apr 2017 14:55:49 +0100 	Wed, 12 Apr 2017 17:17:13 +0100 	KubeletHasNoDiskPressure 	kubelet has no disk pressure
+  Ready 		True 	Thu, 27 Apr 2017 14:55:49 +0100 	Thu, 27 Apr 2017 09:18:24 +0100 	KubeletReady 			kubelet is posting ready status
+Addresses:		192.168.99.100,192.168.99.100,192.168.99.100
+Capacity:
+ alpha.kubernetes.io/nvidia-gpu:	0
+ cpu:					2
+ memory:				2050168Ki
+ pods:					20
+Allocatable:
+ alpha.kubernetes.io/nvidia-gpu:	0
+ cpu:					2
+ memory:				2050168Ki
+ pods:					20
+System Info:
+ Machine ID:			896b6d970cd14d158be1fd1c31ff1a8a
+ System UUID:			F7771C31-30B0-44EC-8364-B3517DBC8767
+ Boot ID:			1d589b36-3413-4e82-af80-b2756342eed4
+ Kernel Version:		4.4.27-boot2docker
+ OS Image:			CentOS Linux 7 (Core)
+ Operating System:		linux
+ Architecture:			amd64
+ Container Runtime Version:	docker://1.12.3
+ Kubelet Version:		v1.5.2+43a9be4
+ Kube-Proxy Version:		v1.5.2+43a9be4
+ExternalID:			192.168.99.100
+Non-terminated Pods:		(3 in total)
+  Namespace			Name				CPU Requests	CPU Limits	Memory Requests	Memory Limits
+  ---------			----				------------	----------	---------------	-------------
+  default			docker-registry-1-hfpzp		100m (5%)	0 (0%)		256Mi (12%)	0 (0%)
+  default			onspecificnode			0 (0%)		0 (0%)		0 (0%)		0 (0%)
+  default			router-1-cdglk			100m (5%)	0 (0%)		256Mi (12%)	0 (0%)
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.
+  CPU Requests	CPU Limits	Memory Requests	Memory Limits
+  ------------	----------	---------------	-------------
+  200m (10%)	0 (0%)		512Mi (25%)	0 (0%)
+No events.
+</code></pre>
 
         
       </div>

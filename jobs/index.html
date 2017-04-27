@@ -5,12 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Volumes</title>
-  <meta property="og:title" content="Volumes" />
-  <meta name="twitter:title" content="Volumes" />
-  <meta name="description" content="Kubernetes volumes by example">
-  <meta property="og:description" content="Kubernetes volumes by example">
-  <meta name="twitter:description" content="Kubernetes volumes by example">
+  <title>Jobs</title>
+  <meta property="og:title" content="Jobs" />
+  <meta name="twitter:title" content="Jobs" />
+  <meta name="description" content="Kubernetes jobs by example">
+  <meta property="og:description" content="Kubernetes jobs by example">
+  <meta name="twitter:description" content="Kubernetes jobs by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -18,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/volumes/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/jobs/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/volumes/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/jobs/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -92,11 +92,11 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Volumes</h1>
+              <h1>Jobs</h1>
                 
                   
                     <hr class="small">
-                    <span class="page-subheading">Kubernetes volumes by example</span>
+                    <span class="page-subheading">Kubernetes jobs by example</span>
                   
                 
                 
@@ -112,58 +112,71 @@
   <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <p>A Kubernetes volume is essentially a directory accessible to all containers
-running in a pod. In contrast to the container-local filesystem, the data in volumes is preserved across
-container restarts. The medium backing a volume and its contents are determined
-by the volume type:</p>
+        <p>A jobs is a supervisor for pods carrying out batch processes, that is,
+a process that runs for a certain time to completion, for example a calculation
+or a backup operation.</p>
 
-<ul>
-<li>node-local types such as <code>emptyDir</code> or <code>hostPath</code></li>
-<li>file-sharing types such as <code>nfs</code></li>
-<li>cloud provider-specific types like <code>awsElasticBlockStore</code>, <code>azureDisk</code>, or <code>gcePersistentDisk</code></li>
-<li>distributed file system types, for example <code>glusterfs</code> or <code>cephfs</code></li>
-<li>special-purpose types like <code>secret</code>, <code>gitRepo</code></li>
-</ul>
+<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/jobs/job.yaml">job</a>
+called <code>countdown</code> that supervises a pod counting from 9 down to 1:</p>
 
-<p>A special type of volume is <code>PersistentVolume</code>, which we will cover elsewhere.</p>
-
-<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/volumes/pod.yaml">pod</a>
-with two containers that use an <code>emptyDir</code> volume to exchange data:</p>
-
-<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/volumes/pod.yaml
-
-$ kubectl describe pod sharevol
-Name:                   sharevol
-Namespace:              default
-...
-Volumes:
-  xchange:
-    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
-    Medium:
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/jobs/job.yaml
 </code></pre>
 
-<p>We first exec into one of the containers in the pod, <code>c1</code>, check the volume mount
-and generate some data:</p>
+<p>You can see the job and the pod it looks after like so:</p>
 
-<pre><code class="language-bash">$ kubectl exec sharevol -c c1 -i -t -- bash
-[root@sharevol /]# mount | grep xchange
-/dev/sda1 on /tmp/xchange type ext4 (rw,relatime,data=ordered)
-[root@sharevol /]# echo 'some data' &gt; /tmp/xchange/data
+<pre><code class="language-bash">$ kubectl get jobs
+NAME                      DESIRED   SUCCESSFUL   AGE
+countdown                 1         1            5s
+
+$ kubectl get pods --show-all
+NAME                            READY     STATUS      RESTARTS   AGE
+countdown-lc80g                 0/1       Completed   0          16s
 </code></pre>
 
-<p>When we now exec into <code>c2</code>, the second container running in the pod, we can see
-the volume mounted at <code>/tmp/data</code> and are able to read the data created in the
-previous step:</p>
+<p>To learn more about the status of the job, do:</p>
 
-<pre><code class="language-bash">$ kubectl exec sharevol -c c2 -i -t -- bash
-[root@sharevol /]# mount | grep /tmp/data
-/dev/sda1 on /tmp/data type ext4 (rw,relatime,data=ordered)
-[root@sharevol /]# cat /tmp/data/data
-some data
+<pre><code class="language-bash">$ kubectl describe jobs/countdown
+Name:           countdown
+Namespace:      default
+Image(s):       centos:7
+Selector:       controller-uid=ff585b92-2b43-11e7-b44f-be3e8f4350ff
+Parallelism:    1
+Completions:    1
+Start Time:     Thu, 27 Apr 2017 13:21:10 +0100
+Labels:         controller-uid=ff585b92-2b43-11e7-b44f-be3e8f4350ff
+                job-name=countdown
+Pods Statuses:  0 Running / 1 Succeeded / 0 Failed
+No volumes.
+Events:
+  FirstSeen     LastSeen        Count   From                    SubobjectPath   Type            Reason                  Message
+  ---------     --------        -----   ----                    -------------   --------        ------                  -------
+  2m            2m              1       {job-controller }                       Normal          SuccessfulCreate        Created pod: countdown-lc80g
 </code></pre>
 
-<p>Note that in each container you need to decide where to mount the volume and
-that for <code>emptyDir</code> you currently can not specify resource consumption limits.</p>
+<p>And to see the output of the job via the pod it supervised, execute:</p>
+
+<pre><code class="language-bash">kubectl logs countdown-lc80g
+9
+8
+7
+6
+5
+4
+3
+2
+1
+</code></pre>
+
+<p>To clean up, use the <code>delete</code> verb on the job object which will remove all the
+supervised pods:</p>
+
+<pre><code class="language-bash">$ kubectl delete job countdown
+job &quot;countdown&quot; deleted
+</code></pre>
+
+<p>Note that there are also more advanced ways to use jobs, for example,
+by utilizing a <a href="https://kubernetes.io/docs/tasks/job/coarse-parallel-processing-work-queue/">work queue</a>
+or scheduling the execution at a certain time via <a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">cron jobs</a>.</p>
 
         
       </div>

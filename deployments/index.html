@@ -5,12 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Volumes</title>
-  <meta property="og:title" content="Volumes" />
-  <meta name="twitter:title" content="Volumes" />
-  <meta name="description" content="Kubernetes volumes by example">
-  <meta property="og:description" content="Kubernetes volumes by example">
-  <meta name="twitter:description" content="Kubernetes volumes by example">
+  <title>Deployments</title>
+  <meta property="og:title" content="Deployments" />
+  <meta name="twitter:title" content="Deployments" />
+  <meta name="description" content="Kubernetes deployments by example">
+  <meta property="og:description" content="Kubernetes deployments by example">
+  <meta name="twitter:description" content="Kubernetes deployments by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.png' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -18,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/volumes/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/deployments/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/volumes/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/deployments/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -92,11 +92,11 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Volumes</h1>
+              <h1>Deployments</h1>
                 
                   
                     <hr class="small">
-                    <span class="page-subheading">Kubernetes volumes by example</span>
+                    <span class="page-subheading">Kubernetes deployments by example</span>
                   
                 
                 
@@ -112,58 +112,104 @@
   <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <p>A Kubernetes volume is essentially a directory accessible to all containers
-running in a pod. In contrast to the container-local filesystem, the data in volumes is preserved across
-container restarts. The medium backing a volume and its contents are determined
-by the volume type:</p>
+        <p>A deployment is a supervisor for <a href="/pods/">pods</a>, giving you fine-grained control over how
+and when a new pod version is rolled out as well as rolled back to a previous state.</p>
 
-<ul>
-<li>node-local types such as <code>emptyDir</code> or <code>hostPath</code></li>
-<li>file-sharing types such as <code>nfs</code></li>
-<li>cloud provider-specific types like <code>awsElasticBlockStore</code>, <code>azureDisk</code>, or <code>gcePersistentDisk</code></li>
-<li>distributed file system types, for example <code>glusterfs</code> or <code>cephfs</code></li>
-<li>special-purpose types like <code>secret</code>, <code>gitRepo</code></li>
-</ul>
+<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/deployments/d09.yaml">deployment</a>
+called <code>sise-deploy</code> that supervises two replicas of a pod:</p>
 
-<p>A special type of volume is <code>PersistentVolume</code>, which we will cover elsewhere.</p>
-
-<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/volumes/pod.yaml">pod</a>
-with two containers that use an <code>emptyDir</code> volume to exchange data:</p>
-
-<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/volumes/pod.yaml
-
-$ kubectl describe pod sharevol
-Name:                   sharevol
-Namespace:              default
-...
-Volumes:
-  xchange:
-    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
-    Medium:
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/deployments/d09.yaml
 </code></pre>
 
-<p>We first exec into one of the containers in the pod, <code>c1</code>, check the volume mount
-and generate some data:</p>
+<p>You can see the deployment and the pod it looks after like so:</p>
 
-<pre><code class="language-bash">$ kubectl exec sharevol -c c1 -i -t -- bash
-[root@sharevol /]# mount | grep xchange
-/dev/sda1 on /tmp/xchange type ext4 (rw,relatime,data=ordered)
-[root@sharevol /]# echo 'some data' &gt; /tmp/xchange/data
+<pre><code class="language-bash">$ kubectl get deploy
+NAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+sise-deploy   2         2         2            2           10s
+
+$ kubectl get pods
+NAME                           READY     STATUS    RESTARTS   AGE
+sise-deploy-3513442901-cndsx   1/1       Running   0          15s
+sise-deploy-3513442901-sn74v   1/1       Running   0          15s
 </code></pre>
 
-<p>When we now exec into <code>c2</code>, the second container running in the pod, we can see
-the volume mounted at <code>/tmp/data</code> and are able to read the data created in the
-previous step:</p>
+<p>At this point in time the <code>sise</code> containers running in the pods are configured
+to return the version <code>0.9</code>. Let&rsquo;s verify that from within the cluster (using <code>kubectl describe</code>
+first to get the IP of one of the pods):</p>
 
-<pre><code class="language-bash">$ kubectl exec sharevol -c c2 -i -t -- bash
-[root@sharevol /]# mount | grep /tmp/data
-/dev/sda1 on /tmp/data type ext4 (rw,relatime,data=ordered)
-[root@sharevol /]# cat /tmp/data/data
-some data
+<pre><code class="language-bash">[cluster] $ curl 172.17.0.3:9876/info
+{&quot;host&quot;: &quot;172.17.0.3:9876&quot;, &quot;version&quot;: &quot;0.9&quot;, &quot;from&quot;: &quot;172.17.0.1&quot;}
 </code></pre>
 
-<p>Note that in each container you need to decide where to mount the volume and
-that for <code>emptyDir</code> you currently can not specify resource consumption limits.</p>
+<p>Let&rsquo;s now see what happens if we change that version to <code>1.0</code> in an updated
+<a href="https://github.com/mhausenblas/kbe/blob/master/specs/deployments/d10.yaml">deployment</a>:</p>
+
+<pre><code class="language-bash">$ kubectl apply -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/deployments/d10.yaml
+deployment &quot;sise-deploy&quot; configured
+</code></pre>
+
+<p>Note that you could have used <code>kubectl edit deploy/sise-deploy</code> alternatively to
+achieve the same by manually editing the deployment.</p>
+
+<p>What we now see is the rollout of two new pods with the updated version <code>1.0</code> as well
+as the two old pods with version <code>0.9</code> being terminated:</p>
+
+<pre><code class="language-bash">$ kubectl get pods
+NAME                           READY     STATUS        RESTARTS   AGE
+sise-deploy-2958877261-nfv28   1/1       Running       0          25s
+sise-deploy-2958877261-w024b   1/1       Running       0          25s
+sise-deploy-3513442901-cndsx   1/1       Terminating   0          16m
+sise-deploy-3513442901-sn74v   1/1       Terminating   0          16m
+</code></pre>
+
+<p>Note that during the deployment you can check the progress using <code>kubectl rollout status deploy/sise-deploy</code>.</p>
+
+<p>To verify that if the new <code>1.0</code> version is really available, we execute from
+within the cluster (again using <code>kubectl describe</code> get the IP of one of the pods):</p>
+
+<pre><code class="language-bash">[cluster] $ curl 172.17.0.5:9876/info
+{&quot;host&quot;: &quot;172.17.0.5:9876&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;from&quot;: &quot;172.17.0.1&quot;}
+</code></pre>
+
+<p>A history of all deployments is available via:</p>
+
+<pre><code class="language-bash">$ kubectl rollout history deploy/sise-deploy
+deployments &quot;sise-deploy&quot;
+REVISION        CHANGE-CAUSE
+1               &lt;none&gt;
+2               &lt;none&gt;
+</code></pre>
+
+<p>If there are problems in the deployment Kubernetes will automatically roll back to
+the previous version, however you can also explicitly roll back to a specific revision,
+as in our case to revision 1 (the original pod version ):</p>
+
+<pre><code class="language-bash">$ kubectl rollout undo deploy/sise-deploy --to-revision=1
+deployment &quot;sise-deploy&quot; rolled back
+
+$ kubectl rollout history deploy/sise-deploy
+deployments &quot;sise-deploy&quot;
+REVISION        CHANGE-CAUSE
+2               &lt;none&gt;
+3               &lt;none&gt;
+
+$ kubectl get pods
+NAME                           READY     STATUS    RESTARTS   AGE
+sise-deploy-3513442901-ng8fz   1/1       Running   0          1m
+sise-deploy-3513442901-s8q4s   1/1       Running   0          1m
+</code></pre>
+
+<p>At this point in time we&rsquo;re back at where we started, with two new pods serving
+again version <code>0.9</code>.</p>
+
+<p>Finally, to clean up, we remove the deployment and with it the pods it supervises:</p>
+
+<pre><code class="language-bash">$ kubectl delete deploy sise-deploy
+deployment &quot;sise-deploy&quot; deleted
+</code></pre>
+
+<p>See also the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">docs</a>
+for more options on deployments and when they are triggered.</p>
 
         
       </div>

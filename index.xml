@@ -5,10 +5,76 @@
     <link>http://kubernetesbyexample.com/</link>
     <description>Recent content on Kubernetes By Example</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 26 Apr 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 27 Apr 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://kubernetesbyexample.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Deployments</title>
+      <link>http://kubernetesbyexample.com/deployments/</link>
+      <pubDate>Thu, 27 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/deployments/</guid>
+      <description>A deployment is a supervisor for pods, giving you fine-grained control over how and when a new pod version is rolled out as well as rolled back to a previous state.
+Let&amp;rsquo;s create a deployment called sise-deploy that supervises two replicas of a pod:
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/deployments/d09.yaml  You can see the deployment and the pod it looks after like so:
+$ kubectl get deploy NAME DESIRED CURRENT UP-TO-DATE AVAILABLE AGE sise-deploy 2 2 2 2 10s $ kubectl get pods NAME READY STATUS RESTARTS AGE sise-deploy-3513442901-cndsx 1/1 Running 0 15s sise-deploy-3513442901-sn74v 1/1 Running 0 15s  At this point in time the sise containers running in the pods are configured to return the version 0.</description>
+    </item>
+    
+    <item>
+      <title>Jobs</title>
+      <link>http://kubernetesbyexample.com/jobs/</link>
+      <pubDate>Thu, 27 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/jobs/</guid>
+      <description>A jobs is a supervisor for pods carrying out batch processes, that is, a process that runs for a certain time to completion, for example a calculation or a backup operation.
+Let&amp;rsquo;s create a job called countdown that supervises a pod counting from 9 down to 1:
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/jobs/job.yaml  You can see the job and the pod it looks after like so:
+$ kubectl get jobs NAME DESIRED SUCCESSFUL AGE countdown 1 1 5s $ kubectl get pods --show-all NAME READY STATUS RESTARTS AGE countdown-lc80g 0/1 Completed 0 16s  To learn more about the status of the job, do:</description>
+    </item>
+    
+    <item>
+      <title>Logging</title>
+      <link>http://kubernetesbyexample.com/logging/</link>
+      <pubDate>Thu, 27 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/logging/</guid>
+      <description>Logging is one option to understand what it going on inside your applications and the cluster at large. Basic logging in Kubernetes makes the output a container produces available, which is a good use case for debugging. More advanced setups consider logs across nodes and store them in a central place, either within the cluster or via a dedicated (cloud-based) service.
+Let&amp;rsquo;s create a pod called logme now that runs a container writing to stdout and stderr:</description>
+    </item>
+    
+    <item>
+      <title>Nodes</title>
+      <link>http://kubernetesbyexample.com/nodes/</link>
+      <pubDate>Thu, 27 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/nodes/</guid>
+      <description>In Kubernetes, the nodes are the worker machines where your pods run.
+As a developer you typically don&amp;rsquo;t deal with nodes, however as an admin you might want to familiarize yourself with node operations.
+To list available nodes in your cluster (note that the output will depend on the environment you&amp;rsquo;re using, I&amp;rsquo;m using Minishift):
+$ kubectl get nodes NAME STATUS AGE 192.168.99.100 Ready 14d  One interesting task, from a developer point of view, is to make Kubernetes schedule a pod on a certain task.</description>
+    </item>
+    
+    <item>
+      <title>Secrets</title>
+      <link>http://kubernetesbyexample.com/secrets/</link>
+      <pubDate>Thu, 27 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/secrets/</guid>
+      <description>You don&amp;rsquo;t want sensitive information such as a database password or an API key keep around in clear text. Secrets provide you with a mechanism to use such information in a safe and reliable way with the following properties:
+ Secrets are namespaced objects, that is, exist in the context of a namespace You can access them via a volume or an environment variable from a container running in a pod The secret data on nodes is stored in tmpfs volumes A per-secret size limit of 1MB exists The API server stores secrets as plaintext in etcd  Let&amp;rsquo;s create a secret apikey that holds a (made-up) API key:</description>
+    </item>
+    
+    <item>
+      <title>Volumes</title>
+      <link>http://kubernetesbyexample.com/volumes/</link>
+      <pubDate>Thu, 27 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/volumes/</guid>
+      <description>A Kubernetes volume is essentially a directory accessible to all containers running in a pod. In contrast to the container-local filesystem, the data in volumes is preserved across container restarts. The medium backing a volume and its contents are determined by the volume type:
+ node-local types such as emptyDir or hostPath file-sharing types such as nfs cloud provider-specific types like awsElasticBlockStore, azureDisk, or gcePersistentDisk distributed file system types, for example glusterfs or cephfs special-purpose types like secret, gitRepo  A special type of volume is PersistentVolume, which we will cover elsewhere.</description>
+    </item>
     
     <item>
       <title>Environment Variables</title>
@@ -29,17 +95,6 @@ $ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/spe
       <guid>http://kubernetesbyexample.com/ns/</guid>
       <description>Namespaces provide for a scope of Kubernetes objects. You can think of it as a workspace you&amp;rsquo;re sharing with other users. Many objects such as pods and services are namespaced, while some (like nodes) are not. As a developer you&amp;rsquo;d usually simply use an assigned namespace, however admins may wish to manage them, for example to set up access control or resource quotas.
 Let&amp;rsquo;s list all namespaces (note that the output will depend on the environment you&amp;rsquo;re using, I&amp;rsquo;m using Minishift):</description>
-    </item>
-    
-    <item>
-      <title>Secrets</title>
-      <link>http://kubernetesbyexample.com/secrets/</link>
-      <pubDate>Wed, 26 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://kubernetesbyexample.com/secrets/</guid>
-      <description>You don&amp;rsquo;t want sensitive information such as a database password or an API key keep around in clear text. Secrets provide you with a mechanism to use such information in a safe and reliable way.
-Let&amp;rsquo;s create a secret apikey that holds a (made-up) API key:
-$ echo -n &amp;quot;A19fh68B001j&amp;quot; &amp;gt; ./apikey.txt $ kubectl create secret generic apikey --from-file=./apikey.txt secret &amp;quot;apikey&amp;quot; created $ kubectl describe secrets/apikey Name: apikey Namespace: default Labels: &amp;lt;none&amp;gt; Annotations: &amp;lt;none&amp;gt; Type: Opaque Data ==== apikey.</description>
     </item>
     
     <item>
@@ -101,18 +156,6 @@ $ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/spe
       <description>The basic unit of deployment in Kubernetes is a pod. A pod is a collection of containers sharing a network and mount namespace with the guarantee that all of the containers are scheduled on the same node.
 To launch a pod using a Docker image that exposes a HTTP API at port 9876, execute:
 $ kubectl run sise --image=mhausenblas/simpleservice:0.5.0 --port=9876  We can now see that the pod is running:</description>
-    </item>
-    
-    <item>
-      <title>Volumes</title>
-      <link>http://kubernetesbyexample.com/volumes/</link>
-      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://kubernetesbyexample.com/volumes/</guid>
-      <description>The local container filesystem
-Enter volumes:
-Let&amp;rsquo;s create a pod that
-$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/volumes/pod.yaml  </description>
     </item>
     
   </channel>
