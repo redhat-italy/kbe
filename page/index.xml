@@ -103,5 +103,17 @@ To launch a pod using a Docker image that exposes a HTTP API at port 9876, execu
 $ kubectl run sise --image=mhausenblas/simpleservice:0.5.0 --port=9876  We can now see that the pod is running:</description>
     </item>
     
+    <item>
+      <title>Volumes</title>
+      <link>http://kubernetesbyexample.com/volumes/</link>
+      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://kubernetesbyexample.com/volumes/</guid>
+      <description>The local container filesystem
+Enter volumes:
+Let&amp;rsquo;s create a pod that
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/volumes/pod.yaml  </description>
+    </item>
+    
   </channel>
 </rss>
