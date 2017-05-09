@@ -45,11 +45,23 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="http://kubernetesbyexample.com/">Kubernetes By Example</a>
+      <a class="navbar-brand" href="http://kubernetesbyexample.com/">Home</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Contribute" href="https://github.com/mhausenblas/kbe">Contribute</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Try out!" href="/diy/">Try out!</a>
+            </li>
+          
         
 
         
@@ -117,11 +129,21 @@ I&rsquo;ve got locally running on my machine:</p>
 
 <ol>
 <li>Install <a href="https://docs.openshift.org/latest/minishift/getting-started/installing.html">Minishift</a></li>
-<li>Run <code>minishift start</code></li>
 <li>Install <a href="https://docs.openshift.org/latest/cli_reference/get_started_cli.html#installing-the-cli">oc</a></li>
+<li>Run <code>minishift start</code></li>
 <li>Log in using <code>oc login -u system:admin</code> with password <code>admin</code></li>
-<li>Create a symlink like so:  <code>ln -s oc kubectl</code></li>
+<li>Create a symlink from <code>oc</code> like so:  <code>ln -s oc kubectl</code></li>
 </ol>
+
+<p>All examples have been carried out with the following version, that is, <a href="https://github.com/openshift/origin/releases/tag/v1.4.1">oc 1.4.1</a> and <a href="https://github.com/minishift/minishift/releases/tag/v1.0.0-rc.1">Minishift 1.0.0-rc.1</a> (i.e., Kubernetes 1.5):</p>
+
+<pre><code class="language-bash">$ minishift version
+Minishift version: 1.0.0-rc.1
+
+$ kubectl version
+Client Version: version.Info{Major:&quot;1&quot;, Minor:&quot;4&quot;, GitVersion:&quot;v1.4.0+776c994&quot;, GitCommit:&quot;a9e9cf3&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2017-01-24T15:12:46Z&quot;, GoVersion:&quot;go1.7.4&quot;, Compiler:&quot;gc&quot;, Platform:&quot;darwin/amd64&quot;}
+Server Version: version.Info{Major:&quot;1&quot;, Minor:&quot;5&quot;, GitVersion:&quot;v1.5.2+43a9be4&quot;, GitCommit:&quot;43a9be4&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2017-03-09T19:51:29Z&quot;, GoVersion:&quot;go1.7.4&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/amd64&quot;}
+</code></pre>
 
         
       </div>

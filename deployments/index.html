@@ -45,11 +45,23 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="http://kubernetesbyexample.com/">Kubernetes By Example</a>
+      <a class="navbar-brand" href="http://kubernetesbyexample.com/">Home</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Contribute" href="https://github.com/mhausenblas/kbe">Contribute</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Try out!" href="/diy/">Try out!</a>
+            </li>
+          
         
 
         
@@ -112,26 +124,32 @@
   <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <p>A deployment is a supervisor for <a href="/pods/">pods</a>, giving you fine-grained control over how
+        <p>A deployment is a supervisor for <a href="/pods/">pods</a> and <a href="/rcs/">replica sets</a>, giving you fine-grained control over how
 and when a new pod version is rolled out as well as rolled back to a previous state.</p>
 
 <p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/deployments/d09.yaml">deployment</a>
-called <code>sise-deploy</code> that supervises two replicas of a pod:</p>
+called <code>sise-deploy</code> that supervises two replicas of a pod as well as a replica set:</p>
 
 <pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/deployments/d09.yaml
 </code></pre>
 
-<p>You can see the deployment and the pod it looks after like so:</p>
+<p>You can see the deployment, the replica set and the pods it looks after like so:</p>
 
 <pre><code class="language-bash">$ kubectl get deploy
 NAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 sise-deploy   2         2         2            2           10s
 
+$ kubectl get rs
+NAME                     DESIRED   CURRENT   READY     AGE
+sise-deploy-3513442901   2         2         2         19s
+
 $ kubectl get pods
 NAME                           READY     STATUS    RESTARTS   AGE
-sise-deploy-3513442901-cndsx   1/1       Running   0          15s
-sise-deploy-3513442901-sn74v   1/1       Running   0          15s
+sise-deploy-3513442901-cndsx   1/1       Running   0          25s
+sise-deploy-3513442901-sn74v   1/1       Running   0          25s
 </code></pre>
+
+<p>Note the naming of the pods and replica set, derived from the deployment name.</p>
 
 <p>At this point in time the <code>sise</code> containers running in the pods are configured
 to return the version <code>0.9</code>. Let&rsquo;s verify that from within the cluster (using <code>kubectl describe</code>
@@ -160,6 +178,14 @@ sise-deploy-2958877261-nfv28   1/1       Running       0          25s
 sise-deploy-2958877261-w024b   1/1       Running       0          25s
 sise-deploy-3513442901-cndsx   1/1       Terminating   0          16m
 sise-deploy-3513442901-sn74v   1/1       Terminating   0          16m
+</code></pre>
+
+<p>Also, a new replica set has been created by the deployment:</p>
+
+<pre><code class="language-bash">$ kubectl get rs
+NAME                     DESIRED   CURRENT   READY     AGE
+sise-deploy-2958877261   2         2         2         4s
+sise-deploy-3513442901   0         0         0         24m
 </code></pre>
 
 <p>Note that during the deployment you can check the progress using <code>kubectl rollout status deploy/sise-deploy</code>.</p>
@@ -202,7 +228,8 @@ sise-deploy-3513442901-s8q4s   1/1       Running   0          1m
 <p>At this point in time we&rsquo;re back at where we started, with two new pods serving
 again version <code>0.9</code>.</p>
 
-<p>Finally, to clean up, we remove the deployment and with it the pods it supervises:</p>
+<p>Finally, to clean up, we remove the deployment and with it the replica sets and
+pods it supervises:</p>
 
 <pre><code class="language-bash">$ kubectl delete deploy sise-deploy
 deployment &quot;sise-deploy&quot; deleted

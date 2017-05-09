@@ -16,10 +16,9 @@
       <pubDate>Thu, 27 Apr 2017 00:00:00 +0000</pubDate>
       
       <guid>http://kubernetesbyexample.com/deployments/</guid>
-      <description>A deployment is a supervisor for pods, giving you fine-grained control over how and when a new pod version is rolled out as well as rolled back to a previous state.
-Let&amp;rsquo;s create a deployment called sise-deploy that supervises two replicas of a pod:
-$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/deployments/d09.yaml  You can see the deployment and the pod it looks after like so:
-$ kubectl get deploy NAME DESIRED CURRENT UP-TO-DATE AVAILABLE AGE sise-deploy 2 2 2 2 10s $ kubectl get pods NAME READY STATUS RESTARTS AGE sise-deploy-3513442901-cndsx 1/1 Running 0 15s sise-deploy-3513442901-sn74v 1/1 Running 0 15s  At this point in time the sise containers running in the pods are configured to return the version 0.</description>
+      <description>A deployment is a supervisor for pods and replica sets, giving you fine-grained control over how and when a new pod version is rolled out as well as rolled back to a previous state.
+Let&amp;rsquo;s create a deployment called sise-deploy that supervises two replicas of a pod as well as a replica set:
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/deployments/d09.yaml  You can see the deployment, the replica set and the pods it looks after like so:</description>
     </item>
     
     <item>
@@ -144,7 +143,7 @@ $ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/spe
       
       <guid>http://kubernetesbyexample.com/diy/</guid>
       <description>If you want to try out the examples here yourself, you can use the same setup I&amp;rsquo;ve got locally running on my machine:
- Install Minishift Run minishift start Install oc Log in using oc login -u system:admin with password admin Create a symlink like so: ln -s oc kubectl  </description>
+ Install Minishift Install oc Run minishift start Log in using oc login -u system:admin with password admin Create a symlink from oc like so: ln -s oc kubectl  All examples have been carried out with the following version, that is, oc 1.4.1 and Minishift 1.0.0-rc.1 (i.</description>
     </item>
     
     <item>
