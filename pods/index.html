@@ -124,12 +124,12 @@
   <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <p>The basic unit of deployment in Kubernetes is a pod. A pod is a collection of
-containers sharing a network and mount namespace with the guarantee that all of
-the containers are scheduled on the same node.</p>
+        <p>A pod is a collection of containers sharing a network and mount namespace
+and is the basic unit of deployment in Kubernetes. All containers in a pod
+are scheduled on the same node.</p>
 
-<p>To launch a pod using a <a href="https://github.com/mhausenblas/simpleservice">Docker image</a>
-that exposes a HTTP API at port <code>9876</code>, execute:</p>
+<p>To launch a pod using the container <a href="https://hub.docker.com/r/mhausenblas/simpleservice/">image</a>
+<code>mhausenblas/simpleservice:0.5.0</code> and exposing a HTTP API on port <code>9876</code>, execute:</p>
 
 <pre><code class="language-bash">$ kubectl run sise --image=mhausenblas/simpleservice:0.5.0 --port=9876
 </code></pre>
@@ -173,6 +173,29 @@ on localhost:</p>
 [root@twocontainers /]# curl localhost:9876/info
 {&quot;host&quot;: &quot;localhost:9876&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;127.0.0.1&quot;}
 </code></pre>
+
+<p>Specify the <code>resources</code> field in the pod to influence how much CPU and/or RAM a
+container in a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/pods/constraint-pod.yaml">pod</a>
+can use (here: <code>64MB</code> of RAM and <code>0.5</code> CPUs):</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/pods/constraint-pod.yaml
+
+$ kubectl describe pod constraintpod
+...
+Containers:
+  sise:
+    ...
+    Limits:
+      cpu:      500m
+      memory:   64Mi
+    Requests:
+      cpu:      500m
+      memory:   64Mi
+...
+</code></pre>
+
+<p>Learn more about resource constraints in Kubernetes via the docs <a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-ram-container/">here</a>
+and <a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/">here</a>.</p>
 
 <p>To sum up, launching one or more containers (together) in Kubernetes is simple,
 however doing it directly as shown above comes with a serious limitation: you have to
