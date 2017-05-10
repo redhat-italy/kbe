@@ -5,15 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Kubernetes By Example</title>
-  <meta property="og:title" content="Kubernetes By Example" />
-  <meta name="twitter:title" content="Kubernetes By Example" />
-  <meta name="description" content="This is a hands-on introduction to Kubernetes. Browse the examples:
- pods labels replication controllers deployments services service discovery health checks environment variables namespaces volumes secrets logging jobs nodes  Want to try it out yourself? Follow the instructions here for a local setup or sign up for OpenShift.io for an online environment.">
-  <meta property="og:description" content="This is a hands-on introduction to Kubernetes. Browse the examples:
- pods labels replication controllers deployments services service discovery health checks environment variables namespaces volumes secrets logging jobs nodes  Want to try it out yourself? Follow the instructions here for a local setup or sign up for OpenShift.io for an online environment.">
-  <meta name="twitter:description" content="This is a hands-on introduction to Kubernetes. Browse the examples:
- pods labels replication controllers deployments services service discovery health checks environment variables namespaces volumes …">
+  <title>Service Discovery</title>
+  <meta property="og:title" content="Service Discovery" />
+  <meta name="twitter:title" content="Service Discovery" />
+  <meta name="description" content="Kubernetes service discovery by example">
+  <meta property="og:description" content="Kubernetes service discovery by example">
+  <meta name="twitter:description" content="Kubernetes service discovery by example">
   <meta name="author" content="Michael Hausenblas"/>
   <link href='http://kubernetesbyexample.com/img/kbe-logo.ico' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="http://kubernetesbyexample.com/img/kbe-logo.png" />
@@ -21,12 +18,12 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mhausenblas" />
   <meta name="twitter:creator" content="@mhausenblas" />
-  <meta property="og:url" content="http://kubernetesbyexample.com/" />
+  <meta property="og:url" content="http://kubernetesbyexample.com/sd/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kubernetes By Example" />
 
   <meta name="generator" content="Hugo 0.20.2" />
-  <link rel="canonical" href="http://kubernetesbyexample.com/" />
+  <link rel="canonical" href="http://kubernetesbyexample.com/sd/" />
   <link rel="alternate" href="http://kubernetesbyexample.com/index.xml" type="application/rss+xml" title="Kubernetes By Example">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -107,11 +104,11 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Kubernetes By Example</h1>
+              <h1>Service Discovery</h1>
                 
                   
                     <hr class="small">
-                    <span class="page-subheading">Brought to you by the OpenShift team</span>
+                    <span class="page-subheading">Kubernetes service discovery by example</span>
                   
                 
                 
@@ -124,40 +121,94 @@
 
 
     
-  <div role="main" class="container">
+  <div class="container" role="main">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        
-          <div class="well">
-            <p>This is a hands-on introduction to Kubernetes. Browse the examples:</p>
+        <p>Service discovery is the process of figuring out how to connect to a <a href="/service/">service</a>.
+While there is a service discovery option based on <a href="https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#environment-variables">environment variables</a> available,
+the DNS-based service discovery is preferable. Note that DNS is a <a href="https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/dns/README.md">cluster add-on</a> so make sure your Kubernetes distribution provides for one or install it yourself.</p>
 
-<ul>
-<li><a href="/pods/">pods</a></li>
-<li><a href="/labels/">labels</a></li>
-<li><a href="/rcs/">replication controllers</a></li>
-<li><a href="/deployments/">deployments</a></li>
-<li><a href="/services/">services</a></li>
-<li><a href="/sd/">service discovery</a></li>
-<li><a href="/healthz/">health checks</a></li>
-<li><a href="/envs/">environment variables</a></li>
-<li><a href="/ns/">namespaces</a></li>
-<li><a href="/volumes/">volumes</a></li>
-<li><a href="/secrets/">secrets</a></li>
-<li><a href="/logging/">logging</a></li>
-<li><a href="/jobs/">jobs</a></li>
-<li><a href="/nodes/">nodes</a></li>
-</ul>
+<p>Let&rsquo;s create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/sd/svc.yaml">service</a> named
+<code>thesvc</code> and an <a href="https://github.com/mhausenblas/kbe/blob/master/specs/sd/rc.yaml">RC</a> supervising
+some pods along with it:</p>
 
-<p>Want to try it out yourself? Follow the instructions <a href="/diy/">here</a> for a local
-setup or sign up for <a href="https://openshift.io/">OpenShift.io</a> for an online environment.</p>
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/sd/rc.yaml
 
-          </div>
-        
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/sd/svc.yaml
+</code></pre>
 
-        <div class="posts-list">
-          
-          
-        </div>
+<p>Now we want to connect to the <code>thesvc</code> service from within the cluster, say, from another service.
+To simulate this, we create a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/sd/jumpod.yaml">jump pod</a>
+in the same namespace (<code>default</code>, since we didn&rsquo;t specify anything else):</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/sd/jumpod.yaml
+</code></pre>
+
+<p>The DNS add-on will make sure that our service <code>thesvc</code> is available via the FQDN
+<code>thesvc.default.svc.cluster.local</code> from other pods in the cluster. Let&rsquo;s look up
+the IP the service is available on using a DNS
+lookup tool called <code>dig</code> which is available on the jump pod:</p>
+
+<pre><code class="language-bash">$ kubectl exec jumpod -c shell -i -t -- dig thesvc.default.svc.cluster.local
+
+; &lt;&lt;&gt;&gt; DiG 9.9.4-RedHat-9.9.4-38.el7_3.3 &lt;&lt;&gt;&gt; thesvc.default.svc.cluster.local
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 32925
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;thesvc.default.svc.cluster.local. IN   A
+
+;; ANSWER SECTION:
+thesvc.default.svc.cluster.local. 30 IN A       172.30.192.196
+
+;; Query time: 2 msec
+;; SERVER: 192.168.99.100#53(192.168.99.100)
+;; WHEN: Wed May 10 09:15:43 UTC 2017
+;; MSG SIZE  rcvd: 66
+</code></pre>
+
+<p>The answer to the DNS query tells us that the service is available via the cluster
+IP <code>172.30.192.196</code>. We can directly connect to and consume the service (
+in the same namespace) like so:</p>
+
+<pre><code class="language-bash"> $ kubectl exec jumpod -c shell -i -t -- curl http://thesvc/info
+{&quot;host&quot;: &quot;thesvc&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;172.17.0.5&quot;}
+</code></pre>
+
+<p>Note that the IP address <code>172.17.0.5</code> above is the cluster-internal IP address
+of the jump pod.</p>
+
+<p>To access a service that is deployed in a different namespace than the one you&rsquo;re
+accessing it from, use a FQDN in the form <code>$SVC.$NAMESPACE.svc.cluster.local</code>.</p>
+
+<p>Let&rsquo;s see how that works by creating:</p>
+
+<ol>
+<li>a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/sd/other-ns.yaml">namespace</a> <code>other</code></li>
+<li>a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/sd/other-svc.yaml">service</a> <code>thesvc</code> in namespace <code>other</code></li>
+<li>an <a href="https://github.com/mhausenblas/kbe/blob/master/specs/sd/other-rc.yaml">RC</a> supervising the pods, also in namespace <code>other</code></li>
+</ol>
+
+<p>If you&rsquo;re not familiar with namespaces, check out the <a href="/ns/">namespace examples</a> first.</p>
+
+<pre><code class="language-bash">$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/sd/other-ns.yaml
+
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/sd/other-rc.yaml
+
+$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/sd/other-svc.yaml
+</code></pre>
+
+<p>We&rsquo;re now in the position to consume the service <code>thesvc</code> in namespace <code>other</code> from the
+<code>default</code> namespace (again via the jump pod):</p>
+
+<pre><code class="language-bash">$ kubectl exec jumpod -c shell -i -t -- curl http://thesvc.other/info
+{&quot;host&quot;: &quot;thesvc.other&quot;, &quot;version&quot;: &quot;0.5.0&quot;, &quot;from&quot;: &quot;172.17.0.5&quot;}
+</code></pre>
+
+<p>Summing up, DNS-based service discovery provides a flexible and generic way to
+connect to services across the cluster.</p>
 
         
       </div>

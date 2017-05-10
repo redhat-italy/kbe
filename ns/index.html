@@ -170,11 +170,27 @@ openshift-infra   Active    13d
 test              Active    3s
 </code></pre>
 
-<p>To launch a pod in the newley created namespace <code>test</code> and list it then you execute:</p>
+<p>To launch a <a href="https://github.com/mhausenblas/kbe/blob/master/specs/ns/pod.yaml">pod</a> in
+the newly created namespace <code>test</code>, do:</p>
 
 <pre><code class="language-bash">$ kubectl create --namespace=test -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/ns/pod.yaml
+</code></pre>
 
-$ kubectl get pods --namespace=test
+<p>Note that using above method the namespace becomes a runtime property, that is,
+you can easily deploy the same pod or service, or RC, etc. into multiple
+namespaces (for example: <code>dev</code> and <code>prod</code>). If you however prefer to hard-code the
+namespace, you can define it directly in the <code>metadata</code> like so:</p>
+
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: podintest
+  namespace: test
+</code></pre>
+
+<p>To list namespaced objects such as our pod <code>podintest</code>, you execute:</p>
+
+<pre><code class="language-bash">$ kubectl get pods --namespace=test
 NAME        READY     STATUS    RESTARTS   AGE
 podintest   1/1       Running   0          16s
 </code></pre>
