@@ -1,27 +1,27 @@
 +++
 title = "Pods"
-subtitle = "Kubernetes pods by example"
+subtitle = "Openshift pods by example"
 date = "2017-04-24"
 url = "/pods/"
 +++
 
 A pod is a collection of containers sharing a network and mount namespace
-and is the basic unit of deployment in Kubernetes. All containers in a pod
+and is the basic unit of deployment in Openshift. All containers in a pod
 are scheduled on the same node.
 
-To launch a pod using the container [image](https://hub.docker.com/r/mhausenblas/simpleservice/)
-`mhausenblas/simpleservice:0.5.0` and exposing a HTTP API on port `9876`, execute:
+To launch a pod using the container [image](https://hub.docker.com/r/openshift/hello-openshift/)
+`openshift/hello-openshift:latest` and exposing a HTTP API on port `8080`, execute:
 
 ```bash
-$ kubectl run sise --image=mhausenblas/simpleservice:0.5.0 --port=9876
+$ oc run myhello --image=openshift/hello-openshift:latest --port=8080
 ```
 
 We can now see that the pod is running:
 
 ```bash
-$ kubectl get pods
+$ oc get pods
 NAME                      READY     STATUS    RESTARTS   AGE
-sise-3210265840-k705b     1/1       Running   0          1m
+myhello-k705b     1/1       Running   0          1m
 
 $ kubectl describe pod sise-3210265840-k705b | grep IP:
 IP:                     172.17.0.3

@@ -1,22 +1,22 @@
 baseURL = "http://kubernetesbyexample.com"
 DefaultContentLanguage = "en"
-title = "Kubernetes By Example"
+title = "Openshift By Example"
 theme = "beautifulhugo"
 metaDataFormat = "yaml"
-googleAnalytics = "UA-34425776-2"
+googleAnalytics = ""
 
 [Params]
-  subtitle = "Brought to you by the OpenShift team"
-  logo = "img/kbe-logo.png"
-  favicon = "img/kbe-logo.ico"
+  subtitle = "Brought to you by the Red Hat Italy team"
+  logo = "img/obe-logo.png"
+  favicon = "img/obe-logo.ico"
   dateFormat = "2006-01-02"
   commit = false
   rss = false
 
 [Author]
-  name = "Michael Hausenblas"
-  github = "mhausenblas"
-  twitter = "mhausenblas"
+  name = "Red Hat Italy team"
+  github = "redhat-italy"
+  twitter = "RedHatItaly"
 
 [[menu.main]]
   name = "Try out!"
@@ -24,4 +24,4 @@ googleAnalytics = "UA-34425776-2"
 
 [[menu.main]]
   name = "Contribute"
-  url = "https://github.com/mhausenblas/kbe"
+  url = "https://github.com/redhat-italy/obe"
