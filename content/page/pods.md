@@ -1,7 +1,7 @@
 +++
 title = "Pods"
 subtitle = "Openshift pods by example"
-date = "2017-04-24"
+date = "2017-05-14"
 url = "/pods/"
 +++
 
@@ -20,10 +20,10 @@ We can now see that the pod is running:
 
 ```bash
 $ oc get pods
-NAME                      READY     STATUS    RESTARTS   AGE
-myhello-k705b     1/1       Running   0          1m
+NAME              READY     STATUS    RESTARTS   AGE
+myhello-1-hr9mf   1/1       Running   0          13s
 
-$ kubectl describe pod sise-3210265840-k705b | grep IP:
+$ oc describe pod myhello-1-hr9mf | grep IP:
 IP:                     172.17.0.3
 ```
 
@@ -31,13 +31,14 @@ From within the cluster this pod is accessible via the pod IP `172.17.0.3`,
 which we've learned from the `kubectl describe` command above:
 
 ```bash
-[cluster] $ curl 172.17.0.3:9876/info
-{"host": "172.17.0.3:9876", "version": "0.5.0", "from": "172.17.0.1"}
+[cluster] $ curl 172.17.0.3:8080
+Hello OpenShift!
 ```
 
-Note that `kubectl run` creates a [deployment](/deployments/), so in order to
-get rid of the pod you have to execute `kubectl delete deployment sise`.
+Note that `oc run` creates a [DeploymentConfig](/deploymentconfig/), so in order to
+get rid of the pod you have to execute `oc delete dc myhello`.
 
+#/Arrived here.
 
 Alternatively you can create a pod can from a configuration file. In our case
 the [pod](https://github.com/mhausenblas/kbe/blob/master/specs/pods/pod.yaml) is
