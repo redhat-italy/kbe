@@ -10,7 +10,7 @@ and is the basic unit of deployment in Openshift. All containers in a pod
 are scheduled on the same node.
 
 To launch a pod using the container [image](https://hub.docker.com/r/openshift/hello-openshift/)
-`openshift/hello-openshift:latest` and exposing a HTTP API on port `8080`, execute:
+`openshift/hello-openshift:latest` and exposing a HTTP service on port `8080`, execute:
 
 ```bash
 $ oc run myhello --image=openshift/hello-openshift:latest --port=8080
@@ -38,26 +38,28 @@ Hello OpenShift!
 Note that `oc run` creates a [DeploymentConfig](/deploymentconfig/), so in order to
 get rid of the pod you have to execute `oc delete dc myhello`.
 
-#/Arrived here.
-
 Alternatively you can create a pod can from a configuration file. In our case
-the [pod](https://github.com/mhausenblas/kbe/blob/master/specs/pods/pod.yaml) is
-running the already known `simpleservice` image from above along with
+the [pod](https://github.com/redhat-italy/obe/blob/master/specs/pods/pod.yaml) is
+running the already known `myhello` image from above along with
 a generic `CentOS` container:
 
-```bash
-$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/pods/pod.yaml
 
-$ kubectl get pods
+#/Arrived here.
+
+
+```bash
+$ oc create -f https://raw.githubusercontent.com/redhat-italy/obe/master/specs/pods/pod.yaml
+
+$ oc get pods
 NAME                      READY     STATUS    RESTARTS   AGE
 twocontainers             2/2       Running   0          7s
 ```
 
-Now we can exec into the `CentOS` container and access the `simpleservice`
+Now we can exec into the `CentOS` container and access the `myhello`
 on localhost:
 
 ```bash
-$ kubectl exec twocontainers -c shell -i -t -- bash
+$ oc exec twocontainers -c shell -i -t -- bash
 [root@twocontainers /]# curl localhost:9876/info
 {"host": "localhost:9876", "version": "0.5.0", "from": "127.0.0.1"}
 ```
