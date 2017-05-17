@@ -1,17 +1,19 @@
 +++
 title = "Replication Controllers"
-subtitle = "Kubernetes replication controllers by example"
-date = "2017-04-25"
+subtitle = "Openshift replication controllers by example"
+date = "2017-05-17"
 url = "/rcs/"
 +++
 
-A replication controller (RC) is a supervisor for long-running pods.
-An RC will launch a specified number of pods called `replicas` and makes
-sure that they keep running, for example when a node fails or something
-inside of a pod, that is, in one of its containers goes wrong.
+A replication controller (RC) ensures that a given number of replicas of a pod is running at all times.
+An RC will launch a specified number of pods (`replicas`) and makes
+sure that they keep running. If a pod exit or is killed, the replication controller will instantiate more to match the desired number.
+A replication controller is composed by the desired number of replicas, the pod definition, and a selector to identify managed pods.
 
-Let's create an [RC](https://github.com/mhausenblas/kbe/blob/master/specs/rcs/rc.yaml)
-that supervises a single replica of a pod:
+The selector is a set of labels assigned to the pods that are managed by the replication controller. In order to check the number of instances of the pods running, the replication controller will use the selector.
+
+To create an [RC](https://github.com/redhat-italy/obe/blob/master/specs/rcs/rc.yaml)
+that ensures a single replica of a pod:
 
 ```bash
 $ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/rcs/rc.yaml
