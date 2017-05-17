@@ -1,12 +1,18 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: labelex
+  name: podWithLabel
   labels:
     env: development
 spec:
   containers:
-  - name: sise
-    image: mhausenblas/simpleservice:0.5.0
+  - name: myhello
+    image: openshift/hello-openshift:latest
     ports:
-    - containerPort: 9876
+    - containerPort: 8080
+  - name: shell
+    image: centos:7
+    command:
+      - "bin/bash"
+      - "-c"
+      - "sleep 10000"

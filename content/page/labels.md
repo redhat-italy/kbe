@@ -1,18 +1,27 @@
 +++
 title = "Labels"
-subtitle = "Kubernetes labels by example"
-date = "2017-04-25"
+subtitle = "Openshift labels by example"
+date = "2017-05-17"
 url = "/labels/"
 +++
 
-Labels are the mechanism you use to organize Kubernetes objects. A label is a key-value
-pair with certain [restrictions](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set)
+Labels are the mechanism you use to organize, group and select Openshift objects. A label is a key-value
+pair, as in the following example:
+
+```
+(`env=development`)
+(`app=myApp`)
+```
+
+Labels have certain [restrictions](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set)
 concerning length and allowed values but without any pre-defined meaning.
+
+
 So you're free to choose labels as you see fit, for example, to express
 environments such as 'this pod is running in production' or ownership,
-like 'department X owns that pod'.
+like 'department X owns that pod'. Openshift use labels internally in various scenarios. As an example, services reference groups of pods by using labels.
 
-Let's create a [pod](https://github.com/mhausenblas/kbe/blob/master/specs/labels/pod.yaml)
+Let's create a [pod](https://raw.githubusercontent.com/redhat-italy/obe/master/specs/pods/pod.yaml)
 that initially has one label (`env=development`):
 
 ```bash
