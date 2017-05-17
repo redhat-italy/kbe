@@ -1,19 +1,25 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: rcex
+  name: myrc
 spec:
   replicas: 1
   selector:
-    app: sise
+    app: myrc
   template:
     metadata:
-      name: somename
+      name: myrc
       labels:
-        app: sise
+        app: myhello
     spec:
       containers:
-      - name: sise
-        image: mhausenblas/simpleservice:0.5.0
+      - name: myhello
+        image: openshift/hello-openshift:latest
         ports:
-        - containerPort: 9876
+        - containerPort: 8080
+      - name: shell
+        image: centos:7
+        command:
+          - "bin/bash"
+          - "-c"
+          - "sleep 10000"

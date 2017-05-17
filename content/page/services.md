@@ -1,18 +1,15 @@
 +++
 title = "Services"
-subtitle = "Kubernetes services by example"
-date = "2017-04-25"
+subtitle = "Openshift services by example"
+date = "2017-05-17"
 url = "/services/"
 +++
 
-A service is an abstraction for pods, providing a stable, virtual IP (VIP) address.
+A service is an abstraction for pods, providing a stable, virtual IP (VIP) address. It identifies a set of replicated pods, to proxy connections it receives to this set.
 While pods may come and go, services allow clients to reliably connect to the
 containers running in the pods, using the VIP. The `virtual` in VIP means it’s
 not an actual IP address connected to a network interface but its purpose is purely
-to forward traffic to one or more pods. Keeping the mapping between the VIP and the
-pods up-to-date is the job of [kube-proxy](https://kubernetes.io/docs/admin/kube-proxy/),
-a process that runs on every node, which queries the API server to learn about
-new services in the cluster.
+to forward traffic to one or more pods.
 
 Let's create a pod supervised by an [RC](https://github.com/mhausenblas/kbe/blob/master/specs/services/rc.yaml)
 and a [service](https://github.com/mhausenblas/kbe/blob/master/specs/services/svc.yaml)
