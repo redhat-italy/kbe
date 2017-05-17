@@ -39,7 +39,7 @@ Note that `oc run` creates a [DeploymentConfig](/deploymentconfig/), so in order
 get rid of the pod you have to execute `oc delete dc myhello`.
 
 Alternatively you can create a pod can from a configuration file. In our case
-the [pod](https://github.com/redhat-italy/obe/blob/master/specs/pods/pod.yaml) is
+the [pod](https://github.com/redhat-italy/obe/blob/master/specs/labels/pod.yaml) is
 running the already known `myhello` image from above along with
 a generic `CentOS` container:
 

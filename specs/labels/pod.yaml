@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: podWithLabel
+  name: podlabeled
   labels:
     env: development
 spec:
