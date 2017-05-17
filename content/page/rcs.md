@@ -16,45 +16,40 @@ To create an [RC](https://github.com/redhat-italy/obe/blob/master/specs/rcs/rc.y
 that ensures a single replica of a pod:
 
 ```bash
-$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/rcs/rc.yaml
+$ oc create -f https://raw.githubusercontent.com/redhat-italy/obe/master/specs/rcs/rc.yaml
 ```
 
 You can see the RC and the pod it looks after like so:
 
 ```bash
-$ kubectl get rc
+$ oc get rc
 NAME                DESIRED   CURRENT   READY     AGE
-rcex                1         1         1         3m
+myrc                1         1         1         3m
 
-$ kubectl get pods --show-labels
-NAME           READY     STATUS    RESTARTS   AGE    LABELS
-rcex-qrv8j     1/1       Running   0          4m     app=sise
+$ oc get pods --show-labels
+NAME         READY     STATUS    RESTARTS   AGE       LABELS
+myrc-8ztg3   1/1       Running   0          27s       app=myhello
 ```
 
 Note two things here:
 
 - the supervised pod got a random name assigned
-(`rcex-qrv8j`)
-- the way the RC keeps track of its pods is via the label, here `app=sise`
+(`myrc-8ztg3`)
+- the way the RC keeps track of its pods is via the label, here `app=myhello`
 
 To scale up, that is, to increase the number of replicas, do:
 
 ```bash
-$ kubectl scale --replicas=3 rc/rcex
-
-$ kubectl get pods -l app=sise
+$ oc scale --replicas=2 rc/myrc
+$ oc get pods
 NAME         READY     STATUS    RESTARTS   AGE
-rcex-1rh9r   1/1       Running   0          54s
-rcex-lv6xv   1/1       Running   0          54s
-rcex-qrv8j   1/1       Running   0          10m
-
+myrc-3fdq3   1/1       Running   0          15s
+myrc-8ztg3   1/1       Running   0          1m
 ```
 
 Finally, to get rid of the RC and the pods it is supervising, use:
 
 ```bash
-$ kubectl delete rc rcex
-replicationcontroller "rcex" deleted
+$ oc delete rc/myrc
+replicationcontroller "myrc" deleted
 ```
-
-Note that, going forward, the RCs are called [replica sets](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/) (RS), supporting set-based selectors. The RS are already in use in the context of [deployments](/deployments/).
