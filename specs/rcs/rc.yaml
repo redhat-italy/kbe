@@ -8,7 +8,7 @@ spec:
     app: myhello
   template:
     metadata:
-      name: myrc
+      name: myhello
       labels:
         app: myhello
     spec:
@@ -17,9 +17,3 @@ spec:
         image: openshift/hello-openshift:latest
         ports:
         - containerPort: 8080
-      - name: shell
-        image: centos:7
-        command:
-          - "bin/bash"
-          - "-c"
-          - "sleep 10000"

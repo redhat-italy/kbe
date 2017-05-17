@@ -9,10 +9,4 @@ spec:
   - name: myhello
     image: openshift/hello-openshift:latest
     ports:
-    - containerPort: 8080
-  - name: shell
-    image: centos:7
-    command:
-      - "bin/bash"
-      - "-c"
-      - "sleep 10000"
+    - containerPort: 8080 
