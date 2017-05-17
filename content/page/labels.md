@@ -48,13 +48,13 @@ To use a label for filtering, for example to list only pods that have an
 `owner` that equals `giuseppe`, use the `--selector` option:
 
 ```bash
-$  get pods --selector owner=giuseppe
+$ oc get pods --selector owner=giuseppe
 NAME      READY     STATUS    RESTARTS   AGE
 podlabeled   1/1       Running   0          27m
 ```
 
 The `--selector` option can be abbreviated to `-l`, so to select pods that are
-labelled with `env=development`, do:
+labeled with `env=development`, do:
 
 ```bash
 $ oc get pods -l env=development
@@ -63,18 +63,18 @@ podlabeled   1/1       Running   0          27m
 ```
 
 Oftentimes, Openshift objects also support set-based selectors.
-Let's launch [another pod](https://github.com/mhausenblas/kbe/blob/master/specs/labels/anotherpod.yaml)
+Let's launch [another pod](https://github.com/redhat-italy/obe/blob/master/specs/labels/anotherpod.yaml)
 that has two labels (`env=production` and `owner=giuseppe`):
 
 ```bash
-$ kubectl create -f https://raw.githubusercontent.com/mhausenblas/kbe/master/specs/labels/anotherpod.yaml
+$ oc create -f https://raw.githubusercontent.com/redhat-italy/obe/master/specs/labels/anotherpod.yaml
 ```
 
 Now, let's list all pods that are either labelled with `env=development` or with
 `env=production`:
 
 ```bash
-$ kubectl get pods -l 'env in (production, development)'
+$ oc get pods -l 'env in (production, development)'
 NAME           READY     STATUS    RESTARTS   AGE
 labelex        1/1       Running   0          43m
 labelexother   1/1       Running   0          3m
